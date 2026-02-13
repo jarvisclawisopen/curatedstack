@@ -30,8 +30,10 @@ async function insertToSupabase(apps) {
   const transformed = apps.map(record => ({
     name: record.fields.Name,
     description: record.fields.Description || null,
+    detailed_description: record.fields.Detailed || null,
     url: record.fields.URL,
     category: record.fields.Category || null,
+    pricing_model: record.fields['Pricing Model'] || null,
     tags: record.fields.Tags || [],
     logo_url: null,
     screenshot_url: null,
@@ -39,6 +41,7 @@ async function insertToSupabase(apps) {
   })).filter(app => app.name && app.url) // Only valid apps
   
   console.log(`Importing ${transformed.length} apps to Supabase...`)
+  console.log(`Sample record:`, transformed[0])
   
   const response = await fetch(url, {
     method: 'POST',

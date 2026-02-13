@@ -581,6 +581,9 @@ function createAppCard(app) {
   
   const faviconUrl = app.logo_url || getFaviconUrl(app.url)
   
+  // Pricing badge
+  const pricingBadge = app.pricing_model ? `<span class="tag" style="background: ${getPricingColor(app.pricing_model)}; color: white;">${app.pricing_model.toUpperCase()}</span>` : ''
+  
   return `
     <div class="app-window window ${app.featured ? 'featured' : ''}" data-app-id="${app.id}" onclick="openModal('${app.id}')">
       <div class="title-bar">
@@ -598,9 +601,10 @@ function createAppCard(app) {
                onload="this.classList.remove('loading')">
           <div class="app-details">
             <div class="app-description">${app.description || 'No description available'}</div>
-            ${app.tags?.length ? `
+            ${app.tags?.length || app.pricing_model ? `
               <div class="app-tags">
-                ${app.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                ${pricingBadge}
+                ${app.tags?.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('') || ''}
               </div>
             ` : ''}
           </div>
@@ -621,6 +625,16 @@ function createAppCard(app) {
   `
 }
 
+// Pricing color helper
+function getPricingColor(pricing) {
+  const lowerPricing = (pricing || '').toLowerCase()
+  if (lowerPricing.includes('free')) return '#28a745'
+  if (lowerPricing.includes('paid')) return '#dc3545'
+  if (lowerPricing.includes('freemium')) return '#17a2b8'
+  if (lowerPricing.includes('trial')) return '#ffc107'
+  return '#6c757d'
+}
+
 // Modal Functions
 function openModal(appId) {
   playSound('open')
@@ -632,6 +646,11 @@ function openModal(appId) {
   const avgRating = app.rating_count > 0 ? (app.rating_sum / app.rating_count).toFixed(1) : null
   const faviconUrl = app.logo_url || getFaviconUrl(app.url)
   
+  // Use detailed_description if available, fallback to description
+  const fullDescription = app.detailed_description || app.description || 'No description available'
+  
+  const pricingBadge = app.pricing_model ? `<span class="tag" style="background: ${getPricingColor(app.pricing_model)}; color: white; font-weight: bold;">${app.pricing_model.toUpperCase()}</span>` : ''
+  
   const modalContent = `
     <div class="modal-header">
       <img src="${faviconUrl}" class="modal-icon" alt="${app.name}"
@@ -639,16 +658,17 @@ function openModal(appId) {
       <div class="modal-info">
         <div class="modal-title">${app.name}</div>
         <div class="modal-category">${app.category || 'Uncategorized'}</div>
-        ${app.tags?.length ? `
+        ${app.tags?.length || app.pricing_model ? `
           <div class="modal-tags">
-            ${app.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            ${pricingBadge}
+            ${app.tags?.map(tag => `<span class="tag">${tag}</span>`).join('') || ''}
           </div>
         ` : ''}
       </div>
     </div>
     
     <div class="modal-description">
-      ${app.description || 'No description available'}
+      ${fullDescription}
     </div>
     
     <div class="modal-actions">
