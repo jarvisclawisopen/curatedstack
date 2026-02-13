@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Directory - Full Integration Example</title>
+  <link rel="stylesheet" href="./AppCard.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 0;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .controls {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .filter-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🚀 App Directory</h1>
+    <p>Discover the best apps & tools</p>
+  </div>
+
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="total-apps">—</div>
+        <div class="stat-label">Total Apps</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="total-upvotes">—</div>
+        <div class="stat-label">Total Upvotes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="avg-rating">—</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-bar">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search apps..." 
+          id="search-input"
+        >
+      </div>
+      
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Development">Development</button>
+        <button class="filter-btn" data-filter="Design">Design</button>
+        <button class="filter-btn" data-filter="Productivity">Productivity</button>
+        <button class="filter-btn" data-filter="AI">AI</button>
+      </div>
+    </div>
+
+    <!-- App Grid -->
+    <div id="app-grid"></div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import {
+      renderAppGrid,
+      showLoadingSkeleton,
+      animateCardsEntrance
+    } from './AppCard.js'
+
+    // This would normally come from ../src/supabase-api.js
+    // For demo purposes, using mock data
+
+    const container = document.getElementById('app-grid')
+    const searchInput = document.getElementById('search-input')
+    const filterBtns = document.querySelectorAll('.filter-btn')
+    const toast = document.getElementById('toast')
+
+    let allApps = []
+    let currentFilter = 'all'
+    let currentSearch = ''
+
+    // Mock data (replace with real Supabase calls)
+    const mockApps = [
+      {
+        id: '1',
+        name: 'OpenClaw',
+        description: 'AI agent platform for automation and intelligent task execution across your entire workflow',
+        url: 'https://openclaw.ai',
+        category: 'Development',
+        tags: ['AI', 'automation', 'agents'],
+        upvotes: 142,
+        rating_sum: 238,
+        rating_count: 52,
+        featured: true
+      },
+      {
+        id: '2',
+        name: 'Supabase',
+        description: 'Open source Firebase alternative with PostgreSQL database, authentication, and real-time subscriptions',
+        url: 'https://supabase.com',
+        category: 'Development',
+        tags: ['database', 'backend', 'BaaS'],
+        upvotes: 289,
+        rating_sum: 445,
+        rating_count: 95,
+        featured: false
+      },
+      {
+        id: '3',
+        name: 'Figma',
+        description: 'Collaborative design tool for modern UI/UX teams with powerful prototyping features',
+        url: 'https://figma.com',
+        category: 'Design',
+        tags: ['design', 'prototyping', 'collaboration'],
+        upvotes: 534,
+        rating_sum: 892,
+        rating_count: 189,
+        featured: false
+      },
+      {
+        id: '4',
+        name: 'Vercel',
+        description: 'Deploy web projects with zero configuration, automatic scaling, and global CDN',
+        url: 'https://vercel.com',
+        category: 'Development',
+        tags: ['hosting', 'deployment', 'serverless'],
+        upvotes: 201,
+        rating_sum: 312,
+        rating_count: 67,
+        featured: false
+      },
+      {
+        id: '5',
+        name: 'Notion',
+        description: 'All-in-one workspace for notes, docs, wikis, and project management',
+        url: 'https://notion.so',
+        category: 'Productivity',
+        tags: ['notes', 'docs', 'workspace'],
+        upvotes: 678,
+        rating_sum: 1234,
+        rating_count: 267,
+        featured: true
+      },
+      {
+        id: '6',
+        name: 'Linear',
+        description: 'Issue tracking tool designed for high-performance software development teams',
+        url: 'https://linear.app',
+        category: 'Productivity',
+        tags: ['project-management', 'issues', 'workflow'],
+        upvotes: 445,
+        rating_sum: 723,
+        rating_count: 156,
+        featured: false
+      },
+      {
+        id: '7',
+        name: 'Midjourney',
+        description: 'AI-powered image generation tool for creating stunning visuals from text descriptions',
+        url: 'https://midjourney.com',
+        category: 'AI',
+        tags: ['AI', 'image-generation', 'art'],
+        upvotes: 892,
+        rating_sum: 1567,
+        rating_count: 334,
+        featured: true
+      },
+      {
+        id: '8',
+        name: 'Webflow',
+        description: 'Visual web design tool that generates clean, production-ready code',
+        url: 'https://webflow.com',
+        category: 'Design',
+        tags: ['web-design', 'no-code', 'CMS'],
+        upvotes: 356,
+        rating_sum: 623,
+        rating_count: 134,
+        featured: false
+      }
+    ]
+
+    const mockUserVotes = {
+      '1': { upvoted: true, rating: 5 },
+      '3': { upvoted: false, rating: 4 }
+    }
+
+    // Show toast notification
+    function showToast(message, isError = false) {
+      toast.textContent = message
+      toast.className = `toast show ${isError ? 'error' : ''}`
+      
+      setTimeout(() => {
+        toast.classList.remove('show')
+      }, 3000)
+    }
+
+    // Update stats
+    function updateStats(apps) {
+      const totalApps = apps.length
+      const totalUpvotes = apps.reduce((sum, app) => sum + app.upvotes, 0)
+      const totalRatings = apps.reduce((sum, app) => sum + (app.rating_count > 0 ? app.rating_sum / app.rating_count : 0), 0)
+      const avgRating = totalRatings > 0 ? (totalRatings / apps.filter(a => a.rating_count > 0).length).toFixed(1) : '—'
+
+      document.getElementById('total-apps').textContent = totalApps
+      document.getElementById('total-upvotes').textContent = totalUpvotes.toLocaleString()
+      document.getElementById('avg-rating').textContent = avgRating
+    }
+
+    // Filter apps
+    function filterApps() {
+      let filtered = allApps
+
+      // Apply category filter
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(app => 
+          app.category === currentFilter || app.tags.includes(currentFilter)
+        )
+      }
+
+      // Apply search
+      if (currentSearch) {
+        filtered = filtered.filter(app =>
+          app.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          app.description.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          app.tags.some(tag => tag.toLowerCase().includes(currentSearch.toLowerCase()))
+        )
+      }
+
+      return filtered
+    }
+
+    // Render apps
+    function render() {
+      const filtered = filterApps()
+      
+      renderAppGrid(filtered, container, {
+        onUpvote: async (appId) => {
+          console.log('Upvoted:', appId)
+          showToast('✅ Upvote added!')
+          
+          // Simulate API call
+          await new Promise(resolve => setTimeout(resolve, 300))
+          
+          // Update local data
+          const app = allApps.find(a => a.id === appId)
+          if (app) {
+            app.upvotes++
+            updateStats(allApps)
+          }
+          
+          return { success: true }
+        },
+        onRate: async (appId, rating) => {
+          console.log('Rated:', appId, rating)
+          showToast(`✅ Rated ${rating} stars!`)
+          
+          // Simulate API call
+          await new Promise(resolve => setTimeout(resolve, 300))
+          
+          // Update local data
+          const app = allApps.find(a => a.id === appId)
+          if (app) {
+            app.rating_sum += rating
+            app.rating_count++
+            updateStats(allApps)
+          }
+          
+          return { success: true }
+        },
+        userVotes: mockUserVotes
+      })
+      
+      animateCardsEntrance(container)
+      updateStats(filtered)
+    }
+
+    // Search handler (debounced)
+    let searchTimeout
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout)
+      searchTimeout = setTimeout(() => {
+        currentSearch = e.target.value
+        showLoadingSkeleton(container, 6)
+        setTimeout(render, 300)
+      }, 300)
+    })
+
+    // Filter handlers
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        
+        currentFilter = btn.dataset.filter
+        showLoadingSkeleton(container, 6)
+        setTimeout(render, 200)
+      })
+    })
+
+    // Tag click handler
+    container.addEventListener('tagClick', (e) => {
+      searchInput.value = e.detail
+      currentSearch = e.detail
+      showLoadingSkeleton(container, 6)
+      setTimeout(render, 300)
+    })
+
+    // Initial load
+    async function init() {
+      showLoadingSkeleton(container, 8)
+      
+      // Simulate API fetch delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      allApps = mockApps
+      render()
+    }
+
+    init()
+  </script>
+</body>
+</html>

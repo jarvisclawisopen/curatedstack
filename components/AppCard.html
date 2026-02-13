@@ -1,0 +1,58 @@
+<!-- 
+  App Card Component
+  Standalone HTML structure - import do React/Vue/vanilla JS
+-->
+
+<article class="app-card">
+  <!-- Featured badge (voliteľné) -->
+  <div class="app-card__badge" data-featured>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 1L10.163 5.38L15 6.12L11.5 9.545L12.326 14.355L8 12.065L3.674 14.355L4.5 9.545L1 6.12L5.837 5.38L8 1Z" fill="currentColor"/>
+    </svg>
+    Featured
+  </div>
+
+  <!-- Logo -->
+  <div class="app-card__logo">
+    <img src="" alt="" data-logo>
+  </div>
+
+  <!-- Content -->
+  <div class="app-card__content">
+    <h3 class="app-card__title" data-name></h3>
+    <p class="app-card__description" data-description></p>
+    
+    <!-- Tags -->
+    <div class="app-card__tags" data-tags-container>
+      <!-- Tags injected via JS -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="app-card__footer">
+    <!-- Upvote button -->
+    <button class="app-card__upvote" data-upvote-btn>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="upvote-icon">
+        <path d="M10 3L13 9H17L12 13L14 19L10 15L6 19L8 13L3 9H7L10 3Z" fill="currentColor"/>
+      </svg>
+      <span data-upvote-count>0</span>
+    </button>
+
+    <!-- Star rating -->
+    <div class="app-card__rating" data-rating-container>
+      <div class="rating-stars" data-stars>
+        <button class="star" data-star="1">★</button>
+        <button class="star" data-star="2">★</button>
+        <button class="star" data-star="3">★</button>
+        <button class="star" data-star="4">★</button>
+        <button class="star" data-star="5">★</button>
+      </div>
+      <span class="rating-value" data-rating-value>—</span>
+    </div>
+  </div>
+
+  <!-- Link overlay -->
+  <a href="" target="_blank" rel="noopener noreferrer" class="app-card__link" data-link>
+    <span class="sr-only">Visit</span>
+  </a>
+</article>

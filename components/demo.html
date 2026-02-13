@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Directory - Component Demo</title>
+  <link rel="stylesheet" href="./AppCard.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: #6b7280;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 App Directory Components</h1>
+      <p class="subtitle">Demo stránka - AppCard komponenty</p>
+    </header>
+
+    <div class="controls">
+      <button class="btn" onclick="loadMockApps()">Load Apps</button>
+      <button class="btn" onclick="showSkeleton()">Show Loading</button>
+      <button class="btn btn-secondary" onclick="clearGrid()">Clear</button>
+    </div>
+
+    <div id="app-grid"></div>
+  </div>
+
+  <script type="module">
+    import {
+      renderAppGrid,
+      showLoadingSkeleton,
+      animateCardsEntrance,
+      updateCardUpvotes,
+      updateCardRating
+    } from './AppCard.js'
+
+    // Make functions globally available for demo buttons
+    window.renderAppGrid = renderAppGrid
+    window.showLoadingSkeleton = showLoadingSkeleton
+    window.animateCardsEntrance = animateCardsEntrance
+
+    const container = document.getElementById('app-grid')
+
+    // Mock data
+    const mockApps = [
+      {
+        id: '1',
+        name: 'OpenClaw',
+        description: 'AI agent platform for automation and intelligent task execution',
+        url: 'https://openclaw.ai',
+        logo_url: null,
+        category: 'Development',
+        tags: ['AI', 'automation', 'agents'],
+        upvotes: 142,
+        rating_sum: 238,
+        rating_count: 52,
+        featured: true
+      },
+      {
+        id: '2',
+        name: 'Supabase',
+        description: 'Open source Firebase alternative with PostgreSQL database and authentication',
+        url: 'https://supabase.com',
+        logo_url: null,
+        category: 'Development',
+        tags: ['database', 'backend', 'BaaS'],
+        upvotes: 289,
+        rating_sum: 445,
+        rating_count: 95,
+        featured: false
+      },
+      {
+        id: '3',
+        name: 'Figma',
+        description: 'Collaborative design tool for modern UI/UX teams',
+        url: 'https://figma.com',
+        logo_url: null,
+        category: 'Design',
+        tags: ['design', 'prototyping', 'collaboration'],
+        upvotes: 534,
+        rating_sum: 892,
+        rating_count: 189,
+        featured: false
+      },
+      {
+        id: '4',
+        name: 'Vercel',
+        description: 'Deploy web projects with zero configuration and automatic scaling',
+        url: 'https://vercel.com',
+        logo_url: null,
+        category: 'Development',
+        tags: ['hosting', 'deployment', 'serverless'],
+        upvotes: 201,
+        rating_sum: 312,
+        rating_count: 67,
+        featured: false
+      },
+      {
+        id: '5',
+        name: 'Notion',
+        description: 'All-in-one workspace for notes, docs, and collaboration',
+        url: 'https://notion.so',
+        logo_url: null,
+        category: 'Productivity',
+        tags: ['notes', 'docs', 'workspace'],
+        upvotes: 678,
+        rating_sum: 1234,
+        rating_count: 267,
+        featured: true
+      },
+      {
+        id: '6',
+        name: 'Linear',
+        description: 'Issue tracking tool for high-performance software teams',
+        url: 'https://linear.app',
+        logo_url: null,
+        category: 'Productivity',
+        tags: ['project-management', 'issues', 'workflow'],
+        upvotes: 445,
+        rating_sum: 723,
+        rating_count: 156,
+        featured: false
+      }
+    ]
+
+    // Mock user votes
+    const mockUserVotes = {
+      '1': { upvoted: true, rating: 5 },
+      '3': { upvoted: false, rating: 4 }
+    }
+
+    window.loadMockApps = function() {
+      renderAppGrid(mockApps, container, {
+        onUpvote: async (appId) => {
+          console.log('Upvoted app:', appId)
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 500))
+          return { success: true }
+        },
+        onRate: async (appId, rating) => {
+          console.log('Rated app:', appId, 'with', rating, 'stars')
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 500))
+          return { success: true }
+        },
+        userVotes: mockUserVotes
+      })
+      
+      // Animate entrance
+      setTimeout(() => animateCardsEntrance(container), 10)
+    }
+
+    window.showSkeleton = function() {
+      showLoadingSkeleton(container, 6)
+      
+      // Auto-load after 2 seconds
+      setTimeout(() => {
+        window.loadMockApps()
+      }, 2000)
+    }
+
+    window.clearGrid = function() {
+      container.innerHTML = ''
+    }
+
+    // Auto-load on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      window.showSkeleton()
+    })
+  </script>
+</body>
+</html>

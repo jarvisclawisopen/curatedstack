@@ -1,0 +1,19 @@
+# Backups
+*.backup.*
+*-backup.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+*.temp

@@ -1,0 +1,295 @@
+/* ============================================
+   WINDOWS 95 THEME - CuratedStack
+   ============================================ */
+
+@import url('https://unpkg.com/98.css');
+
+:root {
+  /* Windows 95 Classic Colors */
+  --win95-desktop: #008080;
+  --win95-gray: #c0c0c0;
+  --win95-white: #ffffff;
+  --win95-black: #000000;
+  --win95-darkgray: #808080;
+  --win95-navy: #000080;
+  --win95-blue: #0000ff;
+  --win95-teal: #008080;
+  --win95-red: #ff0000;
+  --win95-yellow: #ffff00;
+  
+  /* 3D Border Colors */
+  --win95-highlight: #ffffff;
+  --win95-light: #dfdfdf;
+  --win95-shadow: #808080;
+  --win95-darkshadow: #000000;
+}
+
+body {
+  background: var(--win95-desktop);
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, Arial, sans-serif;
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Windows 95 Window Container */
+.window {
+  background: var(--win95-gray);
+  border-style: solid;
+  border-width: 2px;
+  border-left-color: var(--win95-highlight);
+  border-top-color: var(--win95-highlight);
+  border-right-color: var(--win95-darkshadow);
+  border-bottom-color: var(--win95-darkshadow);
+  box-shadow: 
+    1px 1px 0 1px var(--win95-light),
+    inset 1px 1px 0 1px var(--win95-light);
+}
+
+/* Title Bar */
+.title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  user-select: none;
+}
+
+.title-bar-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.title-bar-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.title-bar-controls button {
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  font-size: 10px;
+  line-height: 10px;
+}
+
+/* Window Body */
+.window-body {
+  margin: 8px;
+}
+
+/* Buttons */
+button, .button {
+  background: var(--win95-gray);
+  border: none;
+  box-shadow:
+    inset -1px -1px var(--win95-darkshadow),
+    inset 1px 1px var(--win95-highlight),
+    inset -2px -2px var(--win95-shadow),
+    inset 2px 2px var(--win95-light);
+  padding: 4px 12px;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  min-width: 75px;
+  min-height: 23px;
+}
+
+button:active, .button:active {
+  box-shadow:
+    inset -1px -1px var(--win95-highlight),
+    inset 1px 1px var(--win95-darkshadow),
+    inset -2px -2px var(--win95-light),
+    inset 2px 2px var(--win95-shadow);
+  padding: 5px 11px 3px 13px;
+}
+
+button:focus {
+  outline: 1px dotted var(--win95-black);
+  outline-offset: -4px;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="search"],
+textarea {
+  background: var(--win95-white);
+  border: none;
+  box-shadow:
+    inset -1px -1px var(--win95-highlight),
+    inset 1px 1px var(--win95-darkshadow),
+    inset -2px -2px var(--win95-light),
+    inset 2px 2px var(--win95-shadow);
+  padding: 3px 4px;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+}
+
+/* Status Bar */
+.status-bar {
+  background: var(--win95-gray);
+  border-top: 1px solid var(--win95-white);
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+}
+
+.status-bar-field {
+  box-shadow:
+    inset -1px -1px var(--win95-highlight),
+    inset 1px 1px var(--win95-shadow);
+  padding: 2px 4px;
+  flex: 1;
+}
+
+/* Taskbar */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: var(--win95-gray);
+  border-top: 2px solid var(--win95-highlight);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  z-index: 9999;
+}
+
+.start-button {
+  font-weight: bold;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: auto;
+}
+
+.start-button::before {
+  content: "🪟";
+  font-size: 14px;
+}
+
+/* Featured App Highlight */
+.featured-window {
+  animation: featured-glow 2s ease-in-out infinite;
+  position: relative;
+}
+
+.featured-window::before {
+  content: "⭐ FEATURED ⭐";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--win95-yellow);
+  color: var(--win95-black);
+  padding: 2px 12px;
+  font-weight: bold;
+  border: 2px solid var(--win95-black);
+  z-index: 10;
+  animation: featured-bounce 1s ease-in-out infinite;
+}
+
+.featured-window .title-bar {
+  background: linear-gradient(90deg, #ff0000, #ff6600, #ffff00);
+  animation: featured-title 3s linear infinite;
+}
+
+@keyframes featured-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+  }
+}
+
+@keyframes featured-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes featured-title {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* App Grid */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  padding-bottom: 50px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--win95-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--win95-gray);
+  border: 2px solid;
+  border-color: var(--win95-highlight) var(--win95-darkshadow) var(--win95-darkshadow) var(--win95-highlight);
+}
+
+::-webkit-scrollbar-button {
+  background: var(--win95-gray);
+  border: 2px solid;
+  border-color: var(--win95-highlight) var(--win95-darkshadow) var(--win95-darkshadow) var(--win95-highlight);
+}
+
+/* Desktop Icons Style */
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.desktop-icon:active {
+  filter: invert(1);
+}
+
+/* Dialog Box */
+.dialog {
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.dialog-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+}
+
+.dialog-icon {
+  font-size: 32px;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 8px;
+  border-top: 1px solid var(--win95-shadow);
+}

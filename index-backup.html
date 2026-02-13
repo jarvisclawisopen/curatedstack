@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CuratedStack - Discover Hand-Picked Apps & Tools</title>
+  <meta name="description" content="A nostalgic Windows 95-inspired directory of curated apps and tools. Vote, rate, and discover new favorites.">
+  
+  <style>
+    /* ============================================
+       RESET & BASE STYLES
+       ============================================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9fafb;
+      --bg-tertiary: #f3f4f6;
+      
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-tertiary: #9ca3af;
+      
+      --border: #e5e7eb;
+      --border-hover: #d1d5db;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #111827;
+      --bg-secondary: #1f2937;
+      --bg-tertiary: #374151;
+      
+      --text-primary: #f9fafb;
+      --text-secondary: #d1d5db;
+      --text-tertiary: #9ca3af;
+      
+      --border: #374151;
+      --border-hover: #4b5563;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+      --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      opacity: 0.95;
+    }
+
+    .dark-mode-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.3s;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .dark-mode-toggle:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    /* ============================================
+       CONTAINER
+       ============================================ */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* ============================================
+       STATS BAR
+       ============================================ */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-primary);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    /* ============================================
+       CONTROLS
+       ============================================ */
+    .controls {
+      background: var(--bg-primary);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .search-bar {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 3rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-tertiary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* ============================================
+       APP GRID
+       ============================================ */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .app-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      z-index: 2;
+    }
+
+    .app-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .app-card:hover .app-logo {
+      transform: scale(1.05);
+    }
+
+    .app-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .app-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .app-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+      transition: color 0.2s;
+    }
+
+    .app-card:hover .app-title {
+      color: var(--primary);
+    }
+
+    .app-description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .app-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.25rem 0.75rem;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-hover);
+    }
+
+    .app-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .upvote-btn {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upvote-btn:hover {
+      background: #eff6ff;
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .upvote-btn.upvoted {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .upvote-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .rating-container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stars {
+      display: flex;
+      gap: 0.125rem;
+    }
+
+    .star {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 1.25rem;
+      color: var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .star:hover,
+    .star.filled {
+      color: #fbbf24;
+      transform: scale(1.1);
+    }
+
+    .rating-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 2rem;
+      text-align: right;
+    }
+
+    .app-link {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ============================================
+       SKELETON LOADING
+       ============================================ */
+    .skeleton {
+      pointer-events: none;
+    }
+
+    .skeleton .app-logo,
+    .skeleton .app-title,
+    .skeleton .app-description,
+    .skeleton .tag,
+    .skeleton .upvote-btn,
+    .skeleton .stars {
+      background: linear-gradient(90deg, var(--bg-tertiary) 0%, var(--border) 50%, var(--bg-tertiary) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+      color: transparent;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton .app-title {
+      width: 70%;
+      height: 1.5rem;
+    }
+
+    .skeleton .app-description {
+      width: 100%;
+      height: 2.5rem;
+    }
+
+    /* ============================================
+       TOAST NOTIFICATION
+       ============================================ */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--success);
+      color: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow-xl);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+      font-weight: 500;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: var(--error);
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .header {
+        padding: 2rem 1rem;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .app-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .upvote-btn {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filters {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+      }
+
+      .filters::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Dark Mode Toggle -->
+  <button class="dark-mode-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+    <span id="theme-icon">🌙</span>
+  </button>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1>🚀 App Directory</h1>
+      <p>Discover and vote for the best apps & tools</p>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="total-apps">—</div>
+        <div class="stat-label">Total Apps</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="total-upvotes">—</div>
+        <div class="stat-label">Total Upvotes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avg-rating">—</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-bar">
+        <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search apps..."
+          id="search-input"
+          autocomplete="off"
+        >
+      </div>
+      
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+      </div>
+    </div>
+
+    <!-- App Grid -->
+    <div class="app-grid" id="app-grid"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    // ============================================
+    // CONFIG - Replace with your Supabase credentials
+    // ============================================
+    const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI1NzksImV4cCI6MjA4NjQ5ODU3OX0.r0RDnh75IGjECXMwMJNZR0oqF-cEubxbQbjXgavsJ_I'
+    const USE_MOCK_DATA = false // Set to false when Supabase is configured
+
+    // ============================================
+    // FINGERPRINT GENERATOR
+    // ============================================
+    function generateFingerprint() {
+      const components = [
+        navigator.userAgent,
+        navigator.language,
+        screen.width + 'x' + screen.height,
+        new Date().getTimezoneOffset(),
+        navigator.hardwareConcurrency || 'unknown',
+        navigator.platform
+      ].join('|')
+      
+      let hash = 0
+      for (let i = 0; i < components.length; i++) {
+        const char = components.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
+      }
+      
+      return Math.abs(hash).toString(36)
+    }
+
+    function getUserFingerprint() {
+      const KEY = 'app_directory_fingerprint'
+      let fingerprint = localStorage.getItem(KEY)
+      
+      if (!fingerprint) {
+        fingerprint = generateFingerprint()
+        localStorage.setItem(KEY, fingerprint)
+      }
+      
+      return fingerprint
+    }
+
+    // ============================================
+    // LOCALSTORAGE VOTE TRACKING
+    // ============================================
+    const voteStorage = {
+      getVotes() {
+        const votes = localStorage.getItem('app_votes')
+        return votes ? JSON.parse(votes) : {}
+      },
+      
+      setVote(appId, type, value = true) {
+        const votes = this.getVotes()
+        if (!votes[appId]) votes[appId] = {}
+        votes[appId][type] = value
+        localStorage.setItem('app_votes', JSON.stringify(votes))
+      },
+      
+      hasUpvoted(appId) {
+        const votes = this.getVotes()
+        return votes[appId]?.upvoted || false
+      },
+      
+      getRating(appId) {
+        const votes = this.getVotes()
+        return votes[appId]?.rating || null
+      }
+    }
+
+    // ============================================
+    // SUPABASE API (simplified inline version)
+    // ============================================
+    async function fetchAppsFromSupabase() {
+      if (USE_MOCK_DATA) return { data: mockApps, error: null }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/apps?order=created_at.desc`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        })
+        
+        const data = await response.json()
+        
+        // Calculate avg rating
+        const appsWithRating = data.map(app => ({
+          ...app,
+          avg_rating: app.rating_count > 0 
+            ? (app.rating_sum / app.rating_count).toFixed(1)
+            : null
+        }))
+        
+        return { data: appsWithRating, error: null }
+      } catch (error) {
+        return { data: null, error }
+      }
+    }
+
+    async function upvoteAppAPI(appId, fingerprint) {
+      if (USE_MOCK_DATA) {
+        await new Promise(resolve => setTimeout(resolve, 300))
+        return { success: true, error: null }
+      }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            app_id: appId,
+            user_fingerprint: fingerprint,
+            vote_type: 'upvote'
+          })
+        })
+        
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.message || 'Failed to upvote')
+        }
+        
+        return { success: true, error: null }
+      } catch (error) {
+        return { success: false, error }
+      }
+    }
+
+    async function rateAppAPI(appId, rating, fingerprint) {
+      if (USE_MOCK_DATA) {
+        await new Promise(resolve => setTimeout(resolve, 300))
+        return { success: true, error: null }
+      }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            app_id: appId,
+            user_fingerprint: fingerprint,
+            vote_type: 'rating',
+            rating_value: rating
+          })
+        })
+        
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.message || 'Failed to rate')
+        }
+        
+        return { success: true, error: null }
+      } catch (error) {
+        return { success: false, error }
+      }
+    }
+
+    // ============================================
+    // MOCK DATA
+    // ============================================
+    const mockApps = [
+      {
+        id: '1',
+        name: 'OpenClaw',
+        description: 'AI agent platform for automation and intelligent task execution across your entire workflow',
+        url: 'https://openclaw.ai',
+        category: 'Development',
+        tags: ['AI', 'automation', 'agents'],
+        upvotes: 142,
+        rating_sum: 238,
+        rating_count: 52,
+        featured: true
+      },
+      {
+        id: '2',
+        name: 'Supabase',
+        description: 'Open source Firebase alternative with PostgreSQL database, authentication, and real-time subscriptions',
+        url: 'https://supabase.com',
+        category: 'Development',
+        tags: ['database', 'backend', 'BaaS'],
+        upvotes: 289,
+        rating_sum: 445,
+        rating_count: 95,
+        featured: false
+      },
+      {
+        id: '3',
+        name: 'Figma',
+        description: 'Collaborative design tool for modern UI/UX teams with powerful prototyping features',
+        url: 'https://figma.com',
+        category: 'Design',
+        tags: ['design', 'prototyping', 'collaboration'],
+        upvotes: 534,
+        rating_sum: 892,
+        rating_count: 189,
+        featured: false
+      },
+      {
+        id: '4',
+        name: 'Vercel',
+        description: 'Deploy web projects with zero configuration, automatic scaling, and global CDN',
+        url: 'https://vercel.com',
+        category: 'Development',
+        tags: ['hosting', 'deployment', 'serverless'],
+        upvotes: 201,
+        rating_sum: 312,
+        rating_count: 67,
+        featured: false
+      },
+      {
+        id: '5',
+        name: 'Notion',
+        description: 'All-in-one workspace for notes, docs, wikis, and project management',
+        url: 'https://notion.so',
+        category: 'Productivity',
+        tags: ['notes', 'docs', 'workspace'],
+        upvotes: 678,
+        rating_sum: 1234,
+        rating_count: 267,
+        featured: true
+      },
+      {
+        id: '6',
+        name: 'Linear',
+        description: 'Issue tracking tool designed for high-performance software development teams',
+        url: 'https://linear.app',
+        category: 'Productivity',
+        tags: ['project-management', 'issues', 'workflow'],
+        upvotes: 445,
+        rating_sum: 723,
+        rating_count: 156,
+        featured: false
+      }
+    ]
+
+    // ============================================
+    // UI COMPONENTS
+    // ============================================
+    function createAppCard(app) {
+      const hasUpvoted = voteStorage.hasUpvoted(app.id)
+      const userRating = voteStorage.getRating(app.id)
+      const avgRating = app.rating_count > 0 
+        ? (app.rating_sum / app.rating_count).toFixed(1)
+        : null
+
+      return `
+        <article class="app-card" data-app-id="${app.id}">
+          ${app.featured ? `
+            <div class="featured-badge">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1L10.163 5.38L15 6.12L11.5 9.545L12.326 14.355L8 12.065L3.674 14.355L4.5 9.545L1 6.12L5.837 5.38L8 1Z" fill="currentColor"/>
+              </svg>
+              Featured
+            </div>
+          ` : ''}
+          
+          <div class="app-logo">
+            ${app.logo_url 
+              ? `<img src="${app.logo_url}" alt="${app.name} logo">`
+              : `<div class="logo-placeholder">${app.name.charAt(0).toUpperCase()}</div>`
+            }
+          </div>
+
+          <div class="app-content">
+            <h3 class="app-title">${app.name}</h3>
+            <p class="app-description">${app.description}</p>
+            
+            ${app.tags?.length > 0 ? `
+              <div class="app-tags">
+                ${app.tags.slice(0, 3).map(tag => `
+                  <span class="tag" data-tag="${tag}">${tag}</span>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="app-footer">
+            <button class="upvote-btn ${hasUpvoted ? 'upvoted' : ''}" data-action="upvote">
+              <svg class="upvote-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+              </svg>
+              <span data-upvote-count>${app.upvotes}</span>
+            </button>
+
+            <div class="rating-container">
+              <div class="stars" data-action="rate">
+                ${[1,2,3,4,5].map(i => `
+                  <button class="star ${userRating && i <= userRating ? 'filled' : ''}" data-rating="${i}">★</button>
+                `).join('')}
+              </div>
+              <span class="rating-value">${avgRating || '—'}</span>
+            </div>
+          </div>
+
+          <a href="${app.url}" target="_blank" rel="noopener noreferrer" class="app-link">
+            <span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;">Visit ${app.name}</span>
+          </a>
+        </article>
+      `
+    }
+
+    function createSkeletonCard() {
+      return `
+        <article class="app-card skeleton">
+          <div class="app-logo"></div>
+          <div class="app-content">
+            <h3 class="app-title"></h3>
+            <p class="app-description"></p>
+            <div class="app-tags">
+              <span class="tag" style="width: 60px;"></span>
+              <span class="tag" style="width: 80px;"></span>
+            </div>
+          </div>
+          <div class="app-footer">
+            <button class="upvote-btn"></button>
+            <div class="rating-container">
+              <div class="stars"></div>
+            </div>
+          </div>
+        </article>
+      `
+    }
+
+    // ============================================
+    // APP STATE
+    // ============================================
+    let allApps = []
+    let currentFilter = 'all'
+    let currentSearch = ''
+    const fingerprint = getUserFingerprint()
+
+    // ============================================
+    // UI FUNCTIONS
+    // ============================================
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast')
+      toast.textContent = message
+      toast.className = `toast show ${isError ? 'error' : ''}`
+      
+      setTimeout(() => {
+        toast.classList.remove('show')
+      }, 3000)
+    }
+
+    function updateStats(apps) {
+      const totalApps = apps.length
+      const totalUpvotes = apps.reduce((sum, app) => sum + app.upvotes, 0)
+      const appsWithRatings = apps.filter(a => a.rating_count > 0)
+      const avgRating = appsWithRatings.length > 0
+        ? (appsWithRatings.reduce((sum, a) => sum + (a.rating_sum / a.rating_count), 0) / appsWithRatings.length).toFixed(1)
+        : '—'
+
+      document.getElementById('total-apps').textContent = totalApps
+      document.getElementById('total-upvotes').textContent = totalUpvotes.toLocaleString()
+      document.getElementById('avg-rating').textContent = avgRating
+    }
+
+    function filterApps() {
+      let filtered = allApps
+
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(app => 
+          app.category === currentFilter || app.tags?.includes(currentFilter)
+        )
+      }
+
+      if (currentSearch) {
+        filtered = filtered.filter(app =>
+          app.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          app.description.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          app.tags?.some(tag => tag.toLowerCase().includes(currentSearch.toLowerCase()))
+        )
+      }
+
+      return filtered
+    }
+
+    function renderApps() {
+      const grid = document.getElementById('app-grid')
+      const filtered = filterApps()
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No apps found</h3>
+            <p>Try adjusting your search or filters</p>
+          </div>
+        `
+        updateStats([])
+        return
+      }
+
+      grid.innerHTML = filtered.map(app => createAppCard(app)).join('')
+      
+      // Animate entrance
+      setTimeout(() => {
+        document.querySelectorAll('.app-card').forEach((card, index) => {
+          card.style.opacity = '0'
+          card.style.transform = 'translateY(20px)'
+          
+          setTimeout(() => {
+            card.style.transition = 'opacity 0.4s, transform 0.4s'
+            card.style.opacity = '1'
+            card.style.transform = 'translateY(0)'
+          }, index * 50)
+        })
+      }, 10)
+
+      updateStats(filtered)
+    }
+
+    function showLoading() {
+      const grid = document.getElementById('app-grid')
+      grid.innerHTML = Array(6).fill(createSkeletonCard()).join('')
+    }
+
+    function generateFilters() {
+      const categories = new Set()
+      allApps.forEach(app => {
+        if (app.category) categories.add(app.category)
+        app.tags?.forEach(tag => categories.add(tag))
+      })
+
+      const filtersEl = document.getElementById('filters')
+      const sortedCategories = Array.from(categories).sort()
+      
+      filtersEl.innerHTML = `
+        <button class="filter-btn active" data-filter="all">All</button>
+        ${sortedCategories.map(cat => `
+          <button class="filter-btn" data-filter="${cat}">${cat}</button>
+        `).join('')}
+      `
+    }
+
+    // ============================================
+    // EVENT HANDLERS
+    // ============================================
+    async function handleUpvote(appId) {
+      if (voteStorage.hasUpvoted(appId)) {
+        showToast('You already upvoted this app', true)
+        return
+      }
+
+      // Optimistic update
+      const card = document.querySelector(`[data-app-id="${appId}"]`)
+      const btn = card.querySelector('[data-action="upvote"]')
+      const count = btn.querySelector('[data-upvote-count]')
+      
+      btn.classList.add('upvoted')
+      count.textContent = parseInt(count.textContent) + 1
+
+      // API call
+      const { success, error } = await upvoteAppAPI(appId, fingerprint)
+
+      if (success) {
+        voteStorage.setVote(appId, 'upvoted', true)
+        showToast('✅ Upvote added!')
+        
+        // Update local data
+        const app = allApps.find(a => a.id === appId)
+        if (app) app.upvotes++
+        updateStats(filterApps())
+      } else {
+        // Rollback
+        btn.classList.remove('upvoted')
+        count.textContent = parseInt(count.textContent) - 1
+        showToast(error?.message || 'Failed to upvote', true)
+      }
+    }
+
+    async function handleRate(appId, rating) {
+      if (voteStorage.getRating(appId)) {
+        showToast('You already rated this app', true)
+        return
+      }
+
+      // Optimistic update
+      const card = document.querySelector(`[data-app-id="${appId}"]`)
+      const stars = card.querySelectorAll('.star')
+      
+      stars.forEach((star, i) => {
+        if (i < rating) {
+          star.classList.add('filled')
+        }
+      })
+
+      // API call
+      const { success, error } = await rateAppAPI(appId, rating, fingerprint)
+
+      if (success) {
+        voteStorage.setVote(appId, 'rating', rating)
+        showToast(`✅ Rated ${rating} stars!`)
+        
+        // Update local data
+        const app = allApps.find(a => a.id === appId)
+        if (app) {
+          app.rating_sum += rating
+          app.rating_count++
+        }
+        updateStats(filterApps())
+      } else {
+        // Rollback
+        stars.forEach(star => star.classList.remove('filled'))
+        showToast(error?.message || 'Failed to rate', true)
+      }
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+    document.getElementById('app-grid').addEventListener('click', (e) => {
+      e.stopPropagation()
+      
+      const upvoteBtn = e.target.closest('[data-action="upvote"]')
+      if (upvoteBtn) {
+        e.preventDefault()
+        const appId = upvoteBtn.closest('[data-app-id]').dataset.appId
+        handleUpvote(appId)
+        return
+      }
+
+      const star = e.target.closest('.star')
+      if (star) {
+        e.preventDefault()
+        const appId = star.closest('[data-app-id]').dataset.appId
+        const rating = parseInt(star.dataset.rating)
+        handleRate(appId, rating)
+        return
+      }
+
+      const tag = e.target.closest('.tag')
+      if (tag) {
+        e.preventDefault()
+        const tagName = tag.dataset.tag
+        document.getElementById('search-input').value = tagName
+        currentSearch = tagName
+        showLoading()
+        setTimeout(renderApps, 200)
+      }
+    })
+
+    // Search with debounce
+    let searchTimeout
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout)
+      searchTimeout = setTimeout(() => {
+        currentSearch = e.target.value
+        showLoading()
+        setTimeout(renderApps, 300)
+      }, 300)
+    })
+
+    // Filter buttons
+    document.getElementById('filters').addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn')
+      if (!btn) return
+
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+
+      currentFilter = btn.dataset.filter
+      showLoading()
+      setTimeout(renderApps, 200)
+    })
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('theme-toggle')
+    const themeIcon = document.getElementById('theme-icon')
+    const html = document.documentElement
+
+    function setTheme(theme) {
+      html.setAttribute('data-theme', theme)
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙'
+      localStorage.setItem('theme', theme)
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'light'
+    setTheme(savedTheme)
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme')
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark')
+    })
+
+    // ============================================
+    // INIT
+    // ============================================
+    async function init() {
+      showLoading()
+
+      const { data, error } = await fetchAppsFromSupabase()
+
+      if (error) {
+        console.error('Failed to fetch apps:', error)
+        showToast('Failed to load apps', true)
+        return
+      }
+
+      allApps = data
+      generateFilters()
+      renderApps()
+    }
+
+    init()
+  </script>
+</body>
+</html>
