@@ -17,3 +17,4 @@ npm-debug.log*
 # Temp
 *.tmp
 *.temp
+node_modules/
