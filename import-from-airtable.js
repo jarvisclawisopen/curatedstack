@@ -1,48 +1,48 @@
 #!/usr/bin/env node
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
 
-const AIRTABLE_TOKEN = 'patEBS6FDch0aZrj7.bf54155c0c015aad7cf4024bdf8dfb91c3246c63ad9f8ce5b5a750c21ac03b8a'
-const AIRTABLE_BASE = 'app4D6UyKLageFn7j'
-const AIRTABLE_TABLE = 'Apps/web database'
+// Load .env
+const env = {}
+try {
+  readFileSync(resolve(process.cwd(), '.env'), 'utf8').split('\n').forEach(line => {
+    const [k, ...v] = line.split('=')
+    if (k && v.length) env[k.trim()] = v.join('=').trim()
+  })
+} catch {}
 
-const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
+const AIRTABLE_TOKEN = env.AIRTABLE_TOKEN || process.env.AIRTABLE_TOKEN
+const AIRTABLE_BASE  = env.AIRTABLE_BASE  || process.env.AIRTABLE_BASE
+const AIRTABLE_TABLE = env.AIRTABLE_TABLE || process.env.AIRTABLE_TABLE
+const SUPABASE_URL   = env.SUPABASE_URL   || process.env.SUPABASE_URL
+const SUPABASE_KEY   = env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_KEY
 
 async function fetchAirtableRecords() {
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(AIRTABLE_TABLE)}`
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${AIRTABLE_TOKEN}`
-    }
-  })
-  
-  if (!response.ok) {
-    throw new Error(`Airtable API error: ${response.status} ${await response.text()}`)
-  }
-  
+  const response = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` } })
+  if (!response.ok) throw new Error(`Airtable API error: ${response.status} ${await response.text()}`)
   const data = await response.json()
   return data.records
 }
 
 async function insertToSupabase(apps) {
   const url = `${SUPABASE_URL}/rest/v1/apps`
-  
-  // Transform Airtable records to Supabase schema
   const transformed = apps.map(record => ({
-    name: record.fields.Name,
-    description: record.fields.Description || null,
-    detailed_description: record.fields.Detailed || null,
-    url: record.fields.URL,
-    category: record.fields.Category || null,
-    pricing_model: record.fields['Pricing Model'] || null,
-    tags: record.fields.Tags || [],
-    logo_url: null,
-    screenshot_url: null,
-    featured: false
-  })).filter(app => app.name && app.url) // Only valid apps
-  
+    name: record.fields['Name'] || record.fields['App Name'] || record.fields['name'] || '',
+    description: record.fields['Description'] || record.fields['description'] || '',
+    detailed_description: record.fields['Detailed Description'] || record.fields['detailed_description'] || '',
+    url: record.fields['URL'] || record.fields['Website'] || record.fields['url'] || '',
+    category: record.fields['Category'] || record.fields['category'] || 'Other',
+    pricing_model: record.fields['Pricing'] || record.fields['Pricing Model'] || record.fields['pricing_model'] || null,
+    tags: record.fields['Tags'] || record.fields['tags'] || [],
+    logo_url: record.fields['Logo URL'] || record.fields['logo_url'] || null,
+    screenshot_url: record.fields['Screenshot URL'] || record.fields['screenshot_url'] || null,
+    featured: record.fields['Featured'] || record.fields['featured'] || false,
+  })).filter(app => app.name && app.url)
+
   console.log(`Importing ${transformed.length} apps to Supabase...`)
   console.log(`Sample record:`, transformed[0])
-  
+
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -54,14 +54,12 @@ async function insertToSupabase(apps) {
     },
     body: JSON.stringify(transformed)
   })
-  
+
   if (!response.ok) {
     const error = await response.text()
     throw new Error(`Supabase API error: ${response.status} ${error}`)
   }
-  
-  const result = await response.json()
-  return result
+  return await response.json()
 }
 
 async function main() {
@@ -69,15 +67,11 @@ async function main() {
     console.log('Fetching records from Airtable...')
     const records = await fetchAirtableRecords()
     console.log(`Found ${records.length} records in Airtable`)
-    
     console.log('Importing to Supabase...')
     const result = await insertToSupabase(records)
-    
     console.log(`✅ Successfully imported ${result.length} apps!`)
     console.log(`\nFirst 3 imported:`)
-    result.slice(0, 3).forEach(app => {
-      console.log(`  - ${app.name} (${app.category})`)
-    })
+    result.slice(0, 3).forEach(app => console.log(`  - ${app.name} (${app.category})`))
   } catch (error) {
     console.error('❌ Import failed:', error.message)
     process.exit(1)
