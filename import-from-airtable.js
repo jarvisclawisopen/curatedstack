@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-const AIRTABLE_TOKEN = 'YOUR_AIRTABLE_TOKEN_HERE'
+const AIRTABLE_TOKEN = 'patEBS6FDch0aZrj7.bf54155c0c015aad7cf4024bdf8dfb91c3246c63ad9f8ce5b5a750c21ac03b8a'
 const AIRTABLE_BASE = 'app4D6UyKLageFn7j'
 const AIRTABLE_TABLE = 'Apps/web database'
 
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI1NzksImV4cCI6MjA4NjQ5ODU3OX0.r0RDnh75IGjECXMwMJNZR0oqF-cEubxbQbjXgavsJ_I'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
 
 async function fetchAirtableRecords() {
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(AIRTABLE_TABLE)}`
@@ -49,7 +49,8 @@ async function insertToSupabase(apps) {
       'apikey': SUPABASE_KEY,
       'Authorization': `Bearer ${SUPABASE_KEY}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+      'Prefer': 'resolution=merge-duplicates,return=representation',
+      'on_conflict': 'name'
     },
     body: JSON.stringify(transformed)
   })
