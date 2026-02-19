@@ -30,7 +30,7 @@ async function insertToSupabase(apps) {
   const transformed = apps.map(record => ({
     name: record.fields['Name'] || record.fields['App Name'] || record.fields['name'] || '',
     description: record.fields['Description'] || record.fields['description'] || '',
-    detailed_description: record.fields['Detailed Description'] || record.fields['detailed_description'] || '',
+    detailed_description: record.fields['Detailed'] || record.fields['Detailed Description'] || record.fields['detailed_description'] || '',
     url: record.fields['URL'] || record.fields['Website'] || record.fields['url'] || '',
     category: record.fields['Category'] || record.fields['category'] || 'Other',
     pricing_model: record.fields['Pricing'] || record.fields['Pricing Model'] || record.fields['pricing_model'] || null,
