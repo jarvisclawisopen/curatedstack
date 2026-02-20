@@ -171,9 +171,15 @@
       border-radius: 0 !important;
       backdrop-filter: none !important;
     }
-    [data-theme="win95"] .theme-toggle::before { display: none !important; }
     [data-theme="win95"] .navbar-stats { color: #000 !important; }
     [data-theme="win95"] .navbar-stats strong { color: #000 !important; }
+    [data-theme="win95"] .btn-submit-app {
+      border-radius: 0 !important;
+      border: 2px solid !important;
+      border-color: #fff #808080 #808080 #fff !important;
+      background: #c0c0c0 !important;
+      color: #000 !important;
+    }
 
     [data-theme="win95"] .hero { display: none !important; }
 
@@ -257,50 +263,81 @@
     .navbar-stats { display: flex; gap: 20px; font-size: 12px; color: var(--text-muted); }
     .navbar-stats strong { color: var(--text); font-weight: 600; }
 
-    /* Theme toggle */
+    /* Theme toggle — pill */
     .theme-toggle {
-      width: 36px; height: 36px;
-      border-radius: 50%;
+      height: 34px;
+      padding: 0 14px 0 10px;
+      border-radius: 999px;
       border: 1px solid var(--glass-border);
       background: var(--glass-bg);
       backdrop-filter: blur(12px);
       color: var(--text-muted);
-      font-size: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font);
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; gap: 6px;
       transition: background var(--trans), border-color var(--trans),
-                  color var(--trans), transform 0.3s ease;
+                  color var(--trans), transform 0.2s ease;
       flex-shrink: 0;
-      position: relative;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
     }
     .theme-toggle:hover {
       background: var(--glass-bg-h);
       color: var(--text);
-      border-color: rgba(var(--accent-rgb),0.4);
-      transform: rotate(20deg) scale(1.08);
+      border-color: rgba(var(--accent-rgb),0.45);
+      transform: scale(1.04);
     }
-    .theme-toggle:active { transform: rotate(0deg) scale(0.95); }
+    .theme-toggle:active { transform: scale(0.97); }
+    .theme-toggle .t-icon { font-size: 15px; line-height: 1; }
+    .theme-toggle .t-label { font-size: 12px; opacity: 0.85; }
 
-    /* Tooltip */
-    .theme-toggle::before {
-      content: attr(data-tip);
-      position: absolute;
-      bottom: calc(100% + 8px);
-      right: 0;
-      background: rgba(0,0,0,0.75);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
-      padding: 4px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 0.15s, transform 0.15s;
+    /* Submit app button */
+    .btn-submit-app {
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(var(--accent-rgb),0.35);
+      background: rgba(var(--accent-rgb),0.10);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
       font-family: var(--font);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: background var(--trans), border-color var(--trans), transform 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
     }
-    .theme-toggle:hover::before { opacity: 1; transform: translateY(0); }
+    .btn-submit-app:hover {
+      background: rgba(var(--accent-rgb),0.20);
+      border-color: rgba(var(--accent-rgb),0.6);
+      transform: scale(1.04);
+    }
+
+    /* Back-to-top */
+    #back-to-top {
+      position: fixed;
+      bottom: 28px; right: 24px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s, background var(--trans), color var(--trans);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    #back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    #back-to-top:hover { background: var(--glass-bg-h); color: var(--text); transform: translateY(-2px); }
+    [data-theme="win95"] #back-to-top { border-radius: 0; border: 2px solid; border-color: #fff #808080 #808080 #fff; background: #c0c0c0; color: #000; box-shadow: none; }
 
     /* ══════════════════════════════════════════
        WRAPPER
@@ -822,6 +859,7 @@
 <canvas id="bg-canvas"></canvas>
 <div class="orb orb-1" id="orb1"></div>
 <div class="orb orb-2" id="orb2"></div>
+<button id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <!-- ── NAVBAR ──────────────────────────────────── -->
 <nav class="navbar">
@@ -835,7 +873,13 @@
       <span><strong id="nav-upvotes">—</strong> upvotes</span>
       <span>avg <strong id="nav-rating">—</strong>⭐</span>
     </div>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Switch theme" data-tip="Switch theme"></button>
+    <a class="btn-submit-app" id="btn-submit" href="mailto:submit@curatedstack.com?subject=Submit%20App" title="Submit an app">
+      <span>+</span><span>Submit app</span>
+    </a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Switch theme">
+      <span class="t-icon" id="t-icon">🌙</span>
+      <span class="t-label" id="t-label">Dark</span>
+    </button>
   </div>
 </nav>
 
@@ -846,6 +890,9 @@
     <div class="hero-eyebrow">✦ Curated by Boe</div>
     <h1 class="hero-title">The best apps &amp; tools,<br><span class="gradient-text">hand-picked for you</span></h1>
     <p class="hero-sub">A living directory of AI tools, dev resources, and tech products worth your attention — updated constantly.</p>
+    <a class="btn-submit-app" style="margin: 0 auto; display:inline-flex;" href="mailto:submit@curatedstack.com?subject=Submit%20App">
+      <span>✦</span><span>Submit your app</span>
+    </a>
   </div>
 
   <div class="filter-bar">
@@ -897,8 +944,8 @@ let currentSearch   = ''
 
 /* ─── THEME ENGINE ────────────────────────── */
 const THEMES = ['dark', 'light', 'win95']
-const THEME_ICONS = { dark: '🌙', light: '☀️', win95: '🖥️' }
-const THEME_TIPS  = { dark: 'Switch to Light', light: 'Switch to Win95', win95: 'Switch to Dark' }
+const THEME_ICONS  = { dark: '🌙', light: '☀️', win95: '🖥️' }
+const THEME_LABELS = { dark: 'Dark', light: 'Light', win95: 'Win95' }
 
 const html     = document.documentElement
 const themeBtn = document.getElementById('theme-toggle')
@@ -908,8 +955,8 @@ let win95Link = null
 function applyTheme(t) {
   theme = t
   html.setAttribute('data-theme', t)
-  themeBtn.textContent = THEME_ICONS[t]
-  themeBtn.setAttribute('data-tip', THEME_TIPS[t])
+  document.getElementById('t-icon').textContent  = THEME_ICONS[t]
+  document.getElementById('t-label').textContent = THEME_LABELS[t]
   localStorage.setItem('cs-theme', t)
 
   if (t === 'win95') {
@@ -1246,6 +1293,12 @@ document.getElementById('search-input').addEventListener('input', e => {
 document.getElementById('category-filter').addEventListener('change', e => {
   currentCategory = e.target.value; renderApps()
 })
+
+/* ─── BACK TO TOP ─────────────────────────────── */
+const bttBtn = document.getElementById('back-to-top')
+window.addEventListener('scroll', () => {
+  bttBtn.classList.toggle('visible', window.scrollY > 400)
+}, { passive: true })
 
 loadApps()
 
