@@ -1268,20 +1268,34 @@ function updateStats() {
 
 /* ─── LOAD ────────────────────────────────── */
 async function loadApps() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/apps?order=featured.desc,upvotes.desc`, {
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-  })
-  allApps = await res.json()
-
-  const cats = [...new Set(allApps.map(a => a.category).filter(Boolean))].sort()
-  document.getElementById('category-filter').innerHTML =
-    '<option value="all">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('')
-
+  const container = document.getElementById('app-container')
   const skel = document.getElementById('skeleton')
-  if (skel) skel.remove()
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/apps?order=featured.desc,upvotes.desc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    if (!Array.isArray(data)) throw new Error('Unexpected response format')
+    allApps = data
 
-  renderApps()
-  updateStats()
+    const cats = [...new Set(allApps.map(a => a.category).filter(Boolean))].sort()
+    document.getElementById('category-filter').innerHTML =
+      '<option value="all">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('')
+
+    if (skel) skel.remove()
+    renderApps()
+    updateStats()
+  } catch (err) {
+    if (skel) skel.remove()
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <p>Could not load apps — <strong>${err.message}</strong></p>
+        <p style="font-size:13px;margin-top:8px;opacity:.6">Check your connection or try refreshing.</p>
+        <button onclick="location.reload()" style="margin-top:16px;padding:8px 20px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text);cursor:pointer;font-family:var(--font);font-size:13px;">↺ Retry</button>
+      </div>`
+  }
 }
 
 /* ─── EVENTS ──────────────────────────────── */
