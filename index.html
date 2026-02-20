@@ -857,13 +857,12 @@
 
   <div id="app-container">
     <div class="skeleton-grid" id="skeleton">
-      ${Array(6).fill(0).map(() => `
-        <div class="skeleton-card">
-          <div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div>
-          <div class="skel skel-line w100"></div><div class="skel skel-line w80"></div>
-          <div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div>
-          <div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div>
-        </div>`).join('')}
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
+      <div class="skeleton-card"><div class="skel-row"><div class="skel skel-icon"></div><div class="skel-lines"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div><div class="skel skel-line w100"></div><div class="skel skel-line w80"></div><div class="skel-tags"><div class="skel skel-tag"></div><div class="skel skel-tag"></div><div class="skel skel-tag"></div></div><div class="skel-footer"><div class="skel skel-btn"></div><div class="skel skel-btn"></div></div></div>
     </div>
   </div>
 </div>
@@ -887,6 +886,11 @@
 /* ─── CONFIG ─────────────────────────────── */
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI1NzksImV4cCI6MjA4NjQ5ODU3OX0.r0RDnh75IGjECXMwMJNZR0oqF-cEubxbQbjXgavsJ_I'
+
+/* ─── STATE ───────────────────────────────── */
+let allApps = []
+let currentCategory = 'all'
+let currentSearch   = ''
 
 /* ─── THEME ENGINE ────────────────────────── */
 const THEMES = ['dark', 'light', 'win95']
@@ -954,11 +958,6 @@ document.addEventListener('mousemove', e => {
     })
   }
 })
-
-/* ─── STATE ───────────────────────────────── */
-let allApps = []
-let currentCategory = 'all'
-let currentSearch   = ''
 
 /* ─── HELPERS ─────────────────────────────── */
 function getFavicon(url) {
