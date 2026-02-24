@@ -817,6 +817,185 @@
     [data-theme="win95"] .tags-row .tag.pricing { color: #fff !important; }
 
     /* ══════════════════════════════════════════
+       VIEW SWITCHER
+    ══════════════════════════════════════════ */
+    .view-switcher {
+      display: flex; gap: 3px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 4px; flex-shrink: 0;
+    }
+    .view-btn {
+      background: none; border: none;
+      color: var(--text-muted); cursor: pointer;
+      padding: 6px 11px; border-radius: var(--radius-sm);
+      font-size: 15px; transition: all var(--trans);
+      font-family: var(--font); line-height: 1;
+    }
+    .view-btn:hover { background: var(--glass-bg-h); color: var(--text); }
+    .view-btn.active { background: var(--accent); color: #fff; }
+    [data-theme="win95"] .view-switcher { border-radius: 0; border: 2px solid; border-color: #fff #808080 #808080 #fff; }
+    [data-theme="win95"] .view-btn { border-radius: 0; }
+    [data-theme="win95"] .view-btn.active { background: navy; color: #fff; }
+
+    /* ══════════════════════════════════════════
+       LIST VIEW
+    ══════════════════════════════════════════ */
+    .list-view { display: flex; flex-direction: column; gap: 6px; }
+    .list-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 100px auto auto 56px 56px;
+      align-items: center; gap: 14px;
+      padding: 10px 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      cursor: pointer; transition: all var(--trans);
+      animation: fadeSlideUp 0.3s ease both;
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+    }
+    .list-row:hover { background: var(--glass-bg-h); border-color: var(--glass-bdr-h); box-shadow: var(--sh-hover); }
+    .list-icon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+    .list-name { font-weight: 600; font-size: 14px; }
+    .list-sub  { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .list-cat  { font-size: 11px; color: var(--accent); background: rgba(var(--accent-rgb),.12); padding: 3px 9px; border-radius: 999px; text-align: center; white-space: nowrap; }
+    .list-tags { display: flex; gap: 4px; flex-wrap: wrap; overflow: hidden; }
+    .list-upvotes, .list-rating { font-size: 12px; color: var(--text-muted); white-space: nowrap; text-align: right; }
+    @media (max-width: 700px) {
+      .list-row { grid-template-columns: 32px 1fr auto; }
+      .list-cat, .list-tags, .list-upvotes, .list-rating { display: none; }
+    }
+
+    /* ══════════════════════════════════════════
+       TABLE VIEW
+    ══════════════════════════════════════════ */
+    .table-wrap {
+      overflow-x: auto; border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    }
+    table.table-view { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table.table-view thead tr { background: rgba(var(--accent-rgb),.06); border-bottom: 1px solid var(--glass-border); }
+    table.table-view th {
+      padding: 13px 16px; text-align: left; font-weight: 600;
+      font-size: 11px; text-transform: uppercase; letter-spacing: .6px;
+      color: var(--text-muted); white-space: nowrap;
+      cursor: pointer; user-select: none; transition: color var(--trans);
+    }
+    table.table-view th:hover { color: var(--accent); }
+    table.table-view th.th-sorted { color: var(--accent); }
+    table.table-view td { padding: 10px 16px; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+    table.table-view tbody tr { cursor: pointer; transition: background var(--trans); }
+    table.table-view tbody tr:hover { background: var(--glass-bg); }
+    table.table-view tbody tr:last-child td { border-bottom: none; }
+    .tbl-name { font-weight: 600; font-size: 14px; }
+    .tbl-sub  { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; margin-top: 2px; }
+    .sort-arrow { opacity: .35; font-size: 10px; margin-left: 3px; }
+    .th-sorted .sort-arrow { opacity: 1; }
+    [data-theme="win95"] table.table-view { font-family: Arial, sans-serif !important; }
+    [data-theme="win95"] table.table-view th { font-family: Arial, sans-serif !important; background: #c0c0c0 !important; color: #000 !important; }
+    [data-theme="win95"] table.table-view tbody tr:hover { background: navy !important; color: #fff !important; }
+
+    /* ══════════════════════════════════════════
+       KANBAN / BOARD VIEW
+    ══════════════════════════════════════════ */
+    .kanban-nav {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    }
+    .kanban-nav-btn {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      color: var(--text); cursor: pointer; padding: 7px 16px;
+      border-radius: var(--radius-md); font-size: 20px; line-height: 1;
+      transition: all var(--trans); backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+    }
+    .kanban-nav-btn:hover { background: var(--glass-bg-h); border-color: var(--glass-bdr-h); }
+    .kanban-hint { font-size: 12px; color: var(--text-faint); }
+    .kanban-wrap {
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      padding-bottom: 16px; cursor: grab;
+    }
+    .kanban-wrap:active { cursor: grabbing; }
+    .kanban-wrap::-webkit-scrollbar { display: none; }
+    .kanban-board { display: flex; gap: 14px; width: max-content; align-items: flex-start; }
+    .kanban-col {
+      width: 290px; scroll-snap-align: start; flex-shrink: 0;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    }
+    .kanban-col-header {
+      padding: 13px 16px; font-weight: 700; font-size: 12px;
+      text-transform: uppercase; letter-spacing: .6px;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(var(--accent-rgb),.07);
+    }
+    .kanban-col-count {
+      background: rgba(var(--accent-rgb),.18); color: var(--accent);
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    }
+    .kanban-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .kanban-card {
+      background: var(--glass-bg-h); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md); padding: 12px;
+      cursor: pointer; transition: all var(--trans);
+      animation: fadeSlideUp 0.3s ease both;
+    }
+    .kanban-card:hover { border-color: var(--glass-bdr-h); transform: translateY(-2px); box-shadow: var(--sh-hover); }
+    .kanban-card-top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+    .kanban-card-icon { width: 26px; height: 26px; border-radius: 7px; object-fit: contain; flex-shrink: 0; }
+    .kanban-card-name { font-weight: 600; font-size: 13px; }
+    .kanban-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 9px; }
+    .kanban-card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-faint); }
+
+    /* ══════════════════════════════════════════
+       TIMELINE VIEW
+    ══════════════════════════════════════════ */
+    .timeline-view { max-width: 780px; margin: 0 auto; }
+    .timeline-month-group { margin-bottom: 44px; }
+    .timeline-month-label {
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--accent); margin-bottom: 22px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .timeline-month-label::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+    .timeline-item {
+      display: grid; grid-template-columns: 72px 24px 1fr;
+      gap: 0 14px; margin-bottom: 14px;
+      animation: fadeSlideUp 0.4s ease both;
+    }
+    .timeline-date { text-align: right; font-size: 11px; color: var(--text-muted); padding-top: 14px; white-space: nowrap; }
+    .timeline-spine { display: flex; flex-direction: column; align-items: center; }
+    .timeline-dot {
+      width: 11px; height: 11px; border-radius: 50%; background: var(--accent);
+      margin-top: 16px; flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.22);
+    }
+    .timeline-bar { flex: 1; width: 2px; background: var(--glass-border); margin-top: 5px; }
+    .timeline-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md); padding: 14px 16px;
+      cursor: pointer; transition: all var(--trans);
+      backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    }
+    .timeline-card:hover { border-color: var(--glass-bdr-h); background: var(--glass-bg-h); box-shadow: var(--sh-hover); }
+    .timeline-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .timeline-card-icon { width: 28px; height: 28px; border-radius: 7px; object-fit: contain; flex-shrink: 0; }
+    .timeline-card-name { font-weight: 600; font-size: 14px; }
+    .timeline-card-cat { font-size: 11px; color: var(--accent); margin-top: 1px; }
+    .timeline-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .timeline-card-tags { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+    @media (max-width: 540px) {
+      .timeline-item { grid-template-columns: 50px 18px 1fr; }
+    }
+
+    /* ══════════════════════════════════════════
        EMPTY / FOOTER
     ══════════════════════════════════════════ */
     .empty-state { text-align: center; padding: 60px 16px; color: var(--text-muted); animation: fadeSlideUp 0.4s ease both; }
@@ -903,6 +1082,13 @@
     <select id="category-filter" class="filter-select">
       <option value="all">All Categories</option>
     </select>
+    <div class="view-switcher" id="view-switcher">
+      <button class="view-btn" data-view="grid"     title="Grid">⊞</button>
+      <button class="view-btn" data-view="list"     title="List">≡</button>
+      <button class="view-btn" data-view="table"    title="Table">⊟</button>
+      <button class="view-btn" data-view="kanban"   title="Board">⋮⋮</button>
+      <button class="view-btn" data-view="timeline" title="Timeline">◎</button>
+    </div>
   </div>
 
   <div id="app-container">
@@ -941,6 +1127,9 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let allApps = []
 let currentCategory = 'all'
 let currentSearch   = ''
+let currentView     = localStorage.getItem('cs-view') || 'grid'
+let sortCol = 'name', sortDir = 1
+let kanbanIdx = 0
 
 /* ─── THEME ENGINE ────────────────────────── */
 const THEMES = ['dark', 'light', 'win95']
@@ -1213,6 +1402,216 @@ async function handleRating(appId, rating, btn) {
   }).catch(() => {})
 }
 
+/* ─── VIEW SWITCHER ───────────────────────── */
+function setView(v) {
+  currentView = v
+  localStorage.setItem('cs-view', v)
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v))
+  renderApps()
+}
+
+/* ─── LIST VIEW ───────────────────────────── */
+function createListRow(app, delay) {
+  const favicon = app.logo_url || getFavicon(app.url)
+  const avg  = app.rating_count > 0 ? (app.rating_sum / app.rating_count).toFixed(1) : null
+  const pc   = getPricingClass(app.pricing_model)
+  const tags = (app.tags || []).slice(0, 3).map(t => `<span class="tag" style="font-size:11px;padding:2px 7px">${t}</span>`).join('')
+  const desc = (app.description || '').slice(0, 65) + ((app.description || '').length > 65 ? '…' : '')
+  return `
+    <div class="list-row" data-id="${app.id}" style="animation-delay:${delay}ms" onclick="openModal('${app.id}')">
+      <img class="list-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+      <div>
+        <div class="list-name">${app.name}</div>
+        <div class="list-sub">${desc}</div>
+      </div>
+      <div class="list-cat">${app.category || 'Other'}</div>
+      <div class="list-tags">${tags}</div>
+      ${app.pricing_model ? `<span class="tag pricing ${pc}" style="font-size:11px">${app.pricing_model}</span>` : '<span></span>'}
+      <div class="list-upvotes">👍 ${app.upvotes || 0}</div>
+      <div class="list-rating">${avg ? `★ ${avg}` : '—'}</div>
+    </div>`
+}
+
+/* ─── TABLE VIEW ──────────────────────────── */
+function tableSort(col) {
+  sortDir = sortCol === col ? -sortDir : 1
+  sortCol = col
+  renderApps()
+}
+
+function renderTableView(apps) {
+  function getVal(a, col) {
+    if (col === 'name')     return (a.name || '').toLowerCase()
+    if (col === 'category') return (a.category || '').toLowerCase()
+    if (col === 'pricing')  return (a.pricing_model || '').toLowerCase()
+    if (col === 'upvotes')  return a.upvotes || 0
+    if (col === 'rating')   return a.rating_count > 0 ? a.rating_sum / a.rating_count : -1
+    return ''
+  }
+  const sorted = [...apps].sort((a, b) => {
+    const va = getVal(a, sortCol), vb = getVal(b, sortCol)
+    return va < vb ? -sortDir : va > vb ? sortDir : 0
+  })
+  function thCls(col) { return sortCol === col ? 'th-sorted' : '' }
+  function arr(col) {
+    if (col !== sortCol) return `<span class="sort-arrow">↕</span>`
+    return `<span class="sort-arrow">${sortDir > 0 ? '↑' : '↓'}</span>`
+  }
+  const rows = sorted.map(app => {
+    const favicon = app.logo_url || getFavicon(app.url)
+    const avg     = app.rating_count > 0 ? (app.rating_sum / app.rating_count).toFixed(1) : null
+    const pc      = getPricingClass(app.pricing_model)
+    const tags    = (app.tags || []).slice(0, 3).map(t => `<span class="tag" style="font-size:11px;padding:2px 6px">${t}</span>`).join('')
+    return `
+      <tr onclick="openModal('${app.id}')">
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <img src="${favicon}" style="width:28px;height:28px;border-radius:7px;object-fit:contain;flex-shrink:0" onerror="this.src='logo.svg'">
+            <div>
+              <div class="tbl-name">${app.name}</div>
+              <div class="tbl-sub">${app.description || ''}</div>
+            </div>
+          </div>
+        </td>
+        <td><span style="color:var(--accent);font-size:13px">${app.category || '—'}</span></td>
+        <td>${app.pricing_model ? `<span class="tag pricing ${pc}" style="font-size:11px">${app.pricing_model}</span>` : '—'}</td>
+        <td><div style="display:flex;gap:4px;flex-wrap:wrap">${tags}</div></td>
+        <td style="color:var(--text-muted);text-align:right">${app.upvotes || 0}</td>
+        <td style="color:var(--text-muted);text-align:right">${avg ? `★ ${avg}` : '—'}</td>
+      </tr>`
+  }).join('')
+  return `
+    <div class="table-wrap">
+      <table class="table-view">
+        <thead>
+          <tr>
+            <th class="${thCls('name')}"     onclick="tableSort('name')">App ${arr('name')}</th>
+            <th class="${thCls('category')}" onclick="tableSort('category')">Category ${arr('category')}</th>
+            <th class="${thCls('pricing')}"  onclick="tableSort('pricing')">Pricing ${arr('pricing')}</th>
+            <th>Tags</th>
+            <th class="${thCls('upvotes')}"  onclick="tableSort('upvotes')" style="text-align:right">👍 ${arr('upvotes')}</th>
+            <th class="${thCls('rating')}"   onclick="tableSort('rating')"  style="text-align:right">★ ${arr('rating')}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`
+}
+
+/* ─── KANBAN / BOARD VIEW ─────────────────── */
+function kanbanScroll(dir) {
+  const wrap = document.getElementById('kanban-wrap')
+  if (!wrap) return
+  const cols = wrap.querySelectorAll('.kanban-col')
+  kanbanIdx  = Math.max(0, Math.min(cols.length - 1, kanbanIdx + dir))
+  cols[kanbanIdx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+}
+
+function initKanbanDrag() {
+  const wrap = document.getElementById('kanban-wrap')
+  if (!wrap) return
+  let isDown = false, startX, scrollLeft
+  wrap.addEventListener('mousedown', e => { isDown = true; wrap.style.cursor = 'grabbing'; startX = e.pageX - wrap.offsetLeft; scrollLeft = wrap.scrollLeft })
+  wrap.addEventListener('mouseleave', () => { isDown = false; wrap.style.cursor = 'grab' })
+  wrap.addEventListener('mouseup',   () => { isDown = false; wrap.style.cursor = 'grab' })
+  wrap.addEventListener('mousemove', e => {
+    if (!isDown) return; e.preventDefault()
+    const x = e.pageX - wrap.offsetLeft
+    wrap.scrollLeft = scrollLeft - (x - startX) * 1.4
+  })
+}
+
+function renderKanbanView(filtered) {
+  kanbanIdx = 0
+  const cats = [...new Set(filtered.map(a => a.category || 'Other'))].sort()
+  const cols = cats.map((cat, ci) => {
+    const apps  = filtered.filter(a => (a.category || 'Other') === cat)
+    const cards = apps.map((app, i) => {
+      const favicon = app.logo_url || getFavicon(app.url)
+      const pc      = getPricingClass(app.pricing_model)
+      return `
+        <div class="kanban-card" data-id="${app.id}" onclick="openModal('${app.id}')" style="animation-delay:${i*25}ms">
+          <div class="kanban-card-top">
+            <img class="kanban-card-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+            <div class="kanban-card-name">${app.name}</div>
+          </div>
+          <div class="kanban-card-desc">${app.description || ''}</div>
+          <div class="kanban-card-footer">
+            ${app.pricing_model ? `<span class="tag pricing ${pc}" style="font-size:10px;padding:1px 6px">${app.pricing_model}</span>` : '<span></span>'}
+            <span>👍 ${app.upvotes || 0}</span>
+          </div>
+        </div>`
+    }).join('')
+    return `
+      <div class="kanban-col" id="kc-${ci}">
+        <div class="kanban-col-header">
+          <span>${cat}</span>
+          <span class="kanban-col-count">${apps.length}</span>
+        </div>
+        <div class="kanban-cards">${cards}</div>
+      </div>`
+  }).join('')
+  return `
+    <div class="kanban-nav">
+      <button class="kanban-nav-btn" onclick="kanbanScroll(-1)">‹</button>
+      <button class="kanban-nav-btn" onclick="kanbanScroll(1)">›</button>
+      <span class="kanban-hint">${cats.length} categories · drag or swipe</span>
+    </div>
+    <div class="kanban-wrap" id="kanban-wrap">
+      <div class="kanban-board">${cols}</div>
+    </div>`
+}
+
+/* ─── TIMELINE VIEW ───────────────────────── */
+function renderTimelineView(filtered) {
+  const sorted = [...filtered].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  const groups = {}
+  sorted.forEach(app => {
+    const d   = new Date(app.created_at)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const lbl = d.toLocaleString('en', { month: 'long', year: 'numeric' })
+    if (!groups[key]) groups[key] = { label: lbl, apps: [] }
+    groups[key].apps.push(app)
+  })
+  const monthsHtml = Object.entries(groups).map(([, g]) => {
+    const items = g.apps.map((app, i) => {
+      const d       = new Date(app.created_at)
+      const dateStr = d.toLocaleString('en', { day: 'numeric', month: 'short' })
+      const favicon = app.logo_url || getFavicon(app.url)
+      const pc      = getPricingClass(app.pricing_model)
+      const tags    = (app.tags || []).slice(0, 3).map(t => `<span class="tag" style="font-size:11px;padding:2px 6px">${t}</span>`).join('')
+      return `
+        <div class="timeline-item" style="animation-delay:${i * 45}ms">
+          <div class="timeline-date">${dateStr}</div>
+          <div class="timeline-spine">
+            <div class="timeline-dot"></div>
+            <div class="timeline-bar"></div>
+          </div>
+          <div class="timeline-card" onclick="openModal('${app.id}')">
+            <div class="timeline-card-top">
+              <img class="timeline-card-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+              <div>
+                <div class="timeline-card-name">${app.name}</div>
+                <div class="timeline-card-cat">${app.category || 'Other'}</div>
+              </div>
+            </div>
+            <div class="timeline-card-desc">${app.description || ''}</div>
+            <div class="timeline-card-tags">
+              ${app.pricing_model ? `<span class="tag pricing ${pc}" style="font-size:11px;padding:2px 6px">${app.pricing_model}</span>` : ''}
+              ${tags}
+            </div>
+          </div>
+        </div>`
+    }).join('')
+    return `
+      <div class="timeline-month-group">
+        <div class="timeline-month-label">${g.label}</div>
+        ${items}
+      </div>`
+  }).join('')
+  return `<div class="timeline-view">${monthsHtml}</div>`
+}
+
 /* ─── RENDER ──────────────────────────────── */
 function renderApps() {
   const container = document.getElementById('app-container')
@@ -1235,25 +1634,40 @@ function renderApps() {
     return
   }
 
-  const cats = currentCategory === 'all'
-    ? [...new Set(filtered.map(a => a.category || 'Other'))].sort()
-    : [currentCategory]
+  if (currentView === 'list') {
+    container.innerHTML = `<div class="list-view">${filtered.map((a, i) => createListRow(a, i * 25)).join('')}</div>`
 
-  container.innerHTML = cats.map(cat => {
-    const apps = filtered.filter(a => (a.category || 'Other') === cat)
-    if (!apps.length) return ''
-    return `
-      <div class="category-section">
-        <div class="category-header">
-          <span class="category-label">${cat}</span>
-          <div class="category-line"></div>
-          <span class="category-count">${apps.length}</span>
-        </div>
-        <div class="app-grid">${apps.map((a, i) => createCard(a, i * 40)).join('')}</div>
-      </div>`
-  }).join('')
+  } else if (currentView === 'table') {
+    container.innerHTML = renderTableView(filtered)
 
-  requestAnimationFrame(observeCards)
+  } else if (currentView === 'kanban') {
+    container.innerHTML = renderKanbanView(filtered)
+    requestAnimationFrame(initKanbanDrag)
+
+  } else if (currentView === 'timeline') {
+    container.innerHTML = renderTimelineView(filtered)
+    requestAnimationFrame(observeCards)
+
+  } else {
+    // grid (default)
+    const cats = currentCategory === 'all'
+      ? [...new Set(filtered.map(a => a.category || 'Other'))].sort()
+      : [currentCategory]
+    container.innerHTML = cats.map(cat => {
+      const apps = filtered.filter(a => (a.category || 'Other') === cat)
+      if (!apps.length) return ''
+      return `
+        <div class="category-section">
+          <div class="category-header">
+            <span class="category-label">${cat}</span>
+            <div class="category-line"></div>
+            <span class="category-count">${apps.length}</span>
+          </div>
+          <div class="app-grid">${apps.map((a, i) => createCard(a, i * 40)).join('')}</div>
+        </div>`
+    }).join('')
+    requestAnimationFrame(observeCards)
+  }
 }
 
 /* ─── STATS ───────────────────────────────── */
@@ -1307,6 +1721,11 @@ document.getElementById('search-input').addEventListener('input', e => {
 document.getElementById('category-filter').addEventListener('change', e => {
   currentCategory = e.target.value; renderApps()
 })
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => setView(btn.dataset.view))
+})
+// Set initial active view button
+document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentView))
 
 /* ─── BACK TO TOP ─────────────────────────────── */
 const bttBtn = document.getElementById('back-to-top')
