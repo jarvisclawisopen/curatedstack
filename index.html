@@ -853,8 +853,7 @@
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
-      cursor: pointer; transition: all var(--trans);
-      animation: fadeSlideUp 0.3s ease both;
+      cursor: pointer; transition: background var(--trans), border-color var(--trans), box-shadow var(--trans);
       backdrop-filter: blur(var(--blur));
       -webkit-backdrop-filter: blur(var(--blur));
     }
@@ -944,8 +943,7 @@
     .kanban-card {
       background: var(--glass-bg-h); border: 1px solid var(--glass-border);
       border-radius: var(--radius-md); padding: 12px;
-      cursor: pointer; transition: all var(--trans);
-      animation: fadeSlideUp 0.3s ease both;
+      cursor: pointer; transition: border-color var(--trans), box-shadow var(--trans);
     }
     .kanban-card:hover { border-color: var(--glass-bdr-h); transform: translateY(-2px); box-shadow: var(--sh-hover); }
     .kanban-card-top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
@@ -969,7 +967,6 @@
     .timeline-item {
       display: grid; grid-template-columns: 72px 24px 1fr;
       gap: 0 14px; margin-bottom: 14px;
-      animation: fadeSlideUp 0.4s ease both;
     }
     .timeline-date { text-align: right; font-size: 11px; color: var(--text-muted); padding-top: 14px; white-space: nowrap; }
     .timeline-spine { display: flex; flex-direction: column; align-items: center; }
@@ -996,6 +993,61 @@
     @media (max-width: 540px) {
       .timeline-item { grid-template-columns: 50px 18px 1fr; }
     }
+
+    /* ══════════════════════════════════════════
+       CUSTOM CURSOR
+    ══════════════════════════════════════════ */
+    @media (pointer: fine) {
+      html, * { cursor: none !important; }
+    }
+    .cs-cursor-dot {
+      position: fixed; top: 0; left: 0; z-index: 99999;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none; will-change: transform;
+      transition: width .15s, height .15s, background .15s, opacity .2s;
+      transform: translate(-50%,-50%);
+    }
+    .cs-cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 99998;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(var(--accent-rgb),.45);
+      pointer-events: none; will-change: transform;
+      transition: width .22s, height .22s, border-color .22s, background .22s, border-width .22s, opacity .2s;
+      transform: translate(-50%,-50%);
+    }
+    .cs-cursor-ring.is-hover  { width: 42px; height: 42px; border-color: rgba(var(--accent-rgb),.75); }
+    .cs-cursor-ring.is-cta    { width: 56px; height: 56px; border-width: 2px; border-color: var(--accent); background: rgba(var(--accent-rgb),.07); }
+    .cs-cursor-ring.is-text   { width: 3px;  height: 3px;  border-color: var(--accent); }
+    .cs-cursor-dot.is-press   { width: 4px;  height: 4px; }
+    [data-theme="win95"] .cs-cursor-dot,
+    [data-theme="win95"] .cs-cursor-ring { display: none; }
+
+    /* ══════════════════════════════════════════
+       MOTION — general helpers
+    ══════════════════════════════════════════ */
+    /* View container transition */
+    #app-container { position: relative; }
+
+    /* List/kanban/timeline start invisible — Motion One animates them in */
+    .list-row, .kanban-col, .timeline-item,
+    table.table-view tbody tr {
+      opacity: 0;
+    }
+    /* Fallback: if Motion script fails, show items after 1s */
+    @supports (animation-name: none) {
+      .no-motion .list-row,
+      .no-motion .kanban-col,
+      .no-motion .timeline-item,
+      .no-motion table.table-view tbody tr { opacity: 1 !important; }
+    }
+
+    /* Magnetic wrapper — don't clip the element shift */
+    [data-magnetic] { display: inline-flex; will-change: transform; }
+
+    /* Lottie empty state */
+    .lottie-empty { display: flex; justify-content: center; }
+    lottie-player { display: block; }
 
     /* ══════════════════════════════════════════
        EMPTY / FOOTER
@@ -1037,10 +1089,14 @@
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div id="cs-cursor-dot"  class="cs-cursor-dot"  aria-hidden="true"></div>
+<div id="cs-cursor-ring" class="cs-cursor-ring" aria-hidden="true"></div>
+
 <canvas id="bg-canvas"></canvas>
 <div class="orb orb-1" id="orb1"></div>
 <div class="orb orb-2" id="orb2"></div>
-<button id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="back-to-top" data-magnetic aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <!-- ── NAVBAR ──────────────────────────────────── -->
 <nav class="navbar">
@@ -1054,10 +1110,10 @@
       <span><strong id="nav-upvotes">—</strong> upvotes</span>
       <span>avg <strong id="nav-rating">—</strong>⭐</span>
     </div>
-    <a class="btn-submit-app" id="btn-submit" href="mailto:submit@curatedstack.com?subject=Submit%20App" title="Submit an app">
+    <a class="btn-submit-app" id="btn-submit" data-magnetic href="mailto:submit@curatedstack.com?subject=Submit%20App" title="Submit an app">
       <span>+</span><span>Submit app</span>
     </a>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Switch theme">
+    <button class="theme-toggle" id="theme-toggle" data-magnetic aria-label="Switch theme">
       <span class="t-icon" id="t-icon">🌙</span>
       <span class="t-label" id="t-label">Dark</span>
     </button>
@@ -1633,7 +1689,16 @@ function renderApps() {
   }
 
   if (!filtered.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>No results for <strong>"${currentSearch || currentCategory}"</strong></p></div>`
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="lottie-empty">
+          <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_hl5n0bwb.json"
+            background="transparent" speed="0.9" style="width:140px;height:140px" loop autoplay>
+          </lottie-player>
+        </div>
+        <p>No results for <strong>"${currentSearch || currentCategory}"</strong></p>
+        <p style="font-size:13px;margin-top:6px;opacity:.5">Try a different search or category</p>
+      </div>`
     return
   }
 
@@ -1861,6 +1926,200 @@ loadApps()
     }
   })
 })()
+</script>
+
+<!-- Lottie Player -->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.3/dist/lottie-player.js"></script>
+
+<!-- Motion One + Cursor + Magnetic + Animations -->
+<script type="module">
+import { animate, inView, stagger, spring } from 'https://cdn.jsdelivr.net/npm/motion@10.18.0/+esm'
+
+/* ═══════════════════════════════════════════
+   1. CUSTOM CURSOR
+═══════════════════════════════════════════ */
+;(function initCursor () {
+  if (matchMedia('(pointer: coarse)').matches) return
+
+  const dot  = document.getElementById('cs-cursor-dot')
+  const ring = document.getElementById('cs-cursor-ring')
+  if (!dot || !ring) return
+
+  let mX = -200, mY = -200, rX = -200, rY = -200
+
+  document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY }, { passive: true })
+
+  ;(function tick () {
+    rX += (mX - rX) * 0.14
+    rY += (mY - rY) * 0.14
+    dot.style.left  = mX + 'px'; dot.style.top  = mY + 'px'
+    ring.style.left = rX + 'px'; ring.style.top = rY + 'px'
+    requestAnimationFrame(tick)
+  })()
+
+  document.addEventListener('mouseover', e => {
+    const el  = e.target
+    const cta = el.closest('[data-magnetic]')
+    const btn = el.closest('button, a, [onclick], .app-card, .list-row, .kanban-card, .timeline-card, select, input')
+    const txt = el.closest('p, h1, h2, h3, li')
+    ring.className = 'cs-cursor-ring' + (cta ? ' is-cta' : btn ? ' is-hover' : txt ? ' is-text' : '')
+    dot.className  = 'cs-cursor-dot'
+  })
+
+  document.addEventListener('mousedown', () => dot.classList.add('is-press'))
+  document.addEventListener('mouseup',   () => dot.classList.remove('is-press'))
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0' })
+  document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1' })
+})()
+
+/* ═══════════════════════════════════════════
+   2. MAGNETIC ELEMENTS
+═══════════════════════════════════════════ */
+function initMagnetic () {
+  document.querySelectorAll('[data-magnetic]').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      el.style.transition = 'transform 0.1s ease'
+    })
+    el.addEventListener('mousemove', e => {
+      const r  = el.getBoundingClientRect()
+      const dx = (e.clientX - r.left  - r.width  / 2) * 0.32
+      const dy = (e.clientY - r.top   - r.height / 2) * 0.32
+      el.style.transform = `translate(${dx}px, ${dy}px)`
+    })
+    el.addEventListener('mouseleave', () => {
+      el.style.transition = 'transform 0.55s cubic-bezier(0.25,1,0.5,1)'
+      el.style.transform  = ''
+    })
+  })
+}
+initMagnetic()
+
+/* ═══════════════════════════════════════════
+   3. BUTTON PRESS — spring feedback
+═══════════════════════════════════════════ */
+const EASE_OUT = [0.22, 1, 0.36, 1]
+
+document.addEventListener('mousedown', e => {
+  const btn = e.target.closest('button:not([data-magnetic]), .view-btn')
+  if (btn) animate(btn, { scale: 0.91 }, { duration: 0.08 })
+})
+document.addEventListener('mouseup', e => {
+  const btn = e.target.closest('button, .view-btn')
+  if (btn) animate(btn, { scale: 1 }, { duration: 0.3, easing: spring({ stiffness: 500, damping: 22 }) })
+})
+
+/* ═══════════════════════════════════════════
+   4. ENTRANCE ANIMATIONS (MutationObserver)
+═══════════════════════════════════════════ */
+const seen = new WeakSet()
+
+function animateIn (root) {
+  root = root || document.getElementById('app-container')
+
+  // Category headers — slide from left
+  root.querySelectorAll('.category-header').forEach(el => {
+    if (seen.has(el)) return; seen.add(el)
+    inView(el,
+      () => animate(el, { opacity: [0,1], x: [-20,0] }, { duration: 0.32, easing: EASE_OUT }),
+      { margin: '0px 0px -15px 0px' })
+  })
+
+  // List rows — staggered x-slide
+  const rows = root.querySelectorAll('.list-row')
+  rows.forEach((el, i) => {
+    if (seen.has(el)) return; seen.add(el)
+    animate(el, { opacity: [0,1], x: [-12,0] },
+      { delay: i * 0.028, duration: 0.24, easing: EASE_OUT })
+  })
+
+  // Table rows — staggered fade-slide
+  root.querySelectorAll('table.table-view tbody tr').forEach((el, i) => {
+    if (seen.has(el)) return; seen.add(el)
+    animate(el, { opacity: [0,1], y: [8,0] },
+      { delay: i * 0.022, duration: 0.22, easing: EASE_OUT })
+  })
+
+  // Kanban columns — staggered y-rise
+  root.querySelectorAll('.kanban-col').forEach((el, i) => {
+    if (seen.has(el)) return; seen.add(el)
+    animate(el, { opacity: [0,1], y: [22,0] },
+      { delay: i * 0.07, duration: 0.32, easing: EASE_OUT })
+  })
+
+  // Timeline items — inView x-slide
+  root.querySelectorAll('.timeline-item').forEach(el => {
+    if (seen.has(el)) return; seen.add(el)
+    inView(el,
+      () => animate(el, { opacity: [0,1], x: [18,0] }, { duration: 0.28, easing: EASE_OUT }),
+      { margin: '0px 0px -20px 0px' })
+  })
+
+  // Timeline month labels
+  root.querySelectorAll('.timeline-month-label').forEach(el => {
+    if (seen.has(el)) return; seen.add(el)
+    inView(el,
+      () => animate(el, { opacity: [0,1], y: [-10,0] }, { duration: 0.3, easing: EASE_OUT }),
+      { margin: '0px 0px -10px 0px' })
+  })
+
+  // Re-init magnetic on newly added [data-magnetic] els
+  initMagnetic()
+}
+
+// Watch for content changes
+const appContainer = document.getElementById('app-container')
+new MutationObserver(() => requestAnimationFrame(() => animateIn(appContainer)))
+  .observe(appContainer, { childList: true, subtree: true })
+
+/* ═══════════════════════════════════════════
+   5. VIEW SWITCH TRANSITION
+═══════════════════════════════════════════ */
+const _origRender = window.renderApps
+window.renderApps = function () {
+  animate(appContainer, { opacity: 0.25 }, { duration: 0.08 })
+  _origRender.call(window)
+  animate(appContainer, { opacity: 1 }, { duration: 0.22, easing: EASE_OUT })
+}
+
+/* ═══════════════════════════════════════════
+   6. MODAL OPEN ANIMATION
+═══════════════════════════════════════════ */
+const _origOpen = window.openModal
+window.openModal = function (id) {
+  _origOpen.call(window, id)
+  const modal = document.getElementById('modal')
+  if (modal) animate(modal, { opacity: [0,1], y: [18,0], scale: [0.97,1] },
+    { duration: 0.28, easing: spring({ stiffness: 340, damping: 26 }) })
+}
+
+/* ═══════════════════════════════════════════
+   7. HERO / NAV ENTRANCE (once)
+═══════════════════════════════════════════ */
+animate('.hero',   { opacity: [0,1], y: [24,0] }, { duration: 0.5,  delay: 0.1,  easing: EASE_OUT })
+animate('.navbar', { opacity: [0,1], y: [-8,0] }, { duration: 0.4,  easing: EASE_OUT })
+animate('.filter-bar', { opacity: [0,1], y: [12,0] }, { duration: 0.35, delay: 0.15, easing: EASE_OUT })
+
+/* ═══════════════════════════════════════════
+   8. STATS COUNTER ANIMATION (via MutationObserver)
+═══════════════════════════════════════════ */
+function animateCounter (el) {
+  const target = parseInt(el.textContent) || 0
+  if (isNaN(target) || target === 0) return
+  const dur = 900, t0 = performance.now()
+  const tick = now => {
+    const p = Math.min(1, (now - t0) / dur)
+    el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)))
+    if (p < 1) requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+// Watch the two nav stats counters
+;['nav-count', 'nav-upvotes'].forEach(id => {
+  const el = document.getElementById(id)
+  if (!el) return
+  new MutationObserver(() => { if (el.textContent !== '—') animateCounter(el) })
+    .observe(el, { childList: true, characterData: true, subtree: true })
+})
 </script>
 </body>
 </html>
