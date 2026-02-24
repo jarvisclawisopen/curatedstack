@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CuratedStack - Curated Apps Directory</title>
-  <link rel="icon" href="logo.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.svg">
+  <link rel="apple-touch-icon" href="logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1109,7 +1111,7 @@
 <div class="modal" id="modal">
   <div class="modal-header">
     <div class="modal-title-row">
-      <div class="modal-icon-wrap"><img class="modal-icon" id="modal-icon" src="" alt="" onerror="this.src='logo.svg'"></div>
+      <div class="modal-icon-wrap"><img class="modal-icon" id="modal-icon" src="" alt="" onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'}"></div>
       <div><div class="modal-name" id="modal-name">—</div><div class="modal-meta" id="modal-meta">—</div></div>
     </div>
     <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
@@ -1229,7 +1231,8 @@ function createCard(app, delay = 0) {
       <div class="card-top">
         <div class="app-icon-wrap">
           <img class="app-icon loading" src="${favicon}" alt="${app.name}"
-               onload="this.classList.remove('loading')" onerror="this.src='logo.svg';this.classList.remove('loading')">
+               onload="this.classList.remove('loading')"
+               onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'};this.classList.remove('loading')">
         </div>
         <div class="card-title-wrap">
           <div class="app-name">${app.name}</div>
@@ -1419,7 +1422,7 @@ function createListRow(app, delay) {
   const desc = (app.description || '').slice(0, 65) + ((app.description || '').length > 65 ? '…' : '')
   return `
     <div class="list-row" data-id="${app.id}" style="animation-delay:${delay}ms" onclick="openModal('${app.id}')">
-      <img class="list-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+      <img class="list-icon" src="${favicon}" alt="${app.name}" onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'}">
       <div>
         <div class="list-name">${app.name}</div>
         <div class="list-sub">${desc}</div>
@@ -1466,7 +1469,7 @@ function renderTableView(apps) {
       <tr onclick="openModal('${app.id}')">
         <td>
           <div style="display:flex;align-items:center;gap:10px">
-            <img src="${favicon}" style="width:28px;height:28px;border-radius:7px;object-fit:contain;flex-shrink:0" onerror="this.src='logo.svg'">
+            <img src="${favicon}" style="width:28px;height:28px;border-radius:7px;object-fit:contain;flex-shrink:0" onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'}">
             <div>
               <div class="tbl-name">${app.name}</div>
               <div class="tbl-sub">${app.description || ''}</div>
@@ -1532,7 +1535,7 @@ function renderKanbanView(filtered) {
       return `
         <div class="kanban-card" data-id="${app.id}" onclick="openModal('${app.id}')" style="animation-delay:${i*25}ms">
           <div class="kanban-card-top">
-            <img class="kanban-card-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+            <img class="kanban-card-icon" src="${favicon}" alt="${app.name}" onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'}">
             <div class="kanban-card-name">${app.name}</div>
           </div>
           <div class="kanban-card-desc">${app.description || ''}</div>
@@ -1589,7 +1592,7 @@ function renderTimelineView(filtered) {
           </div>
           <div class="timeline-card" onclick="openModal('${app.id}')">
             <div class="timeline-card-top">
-              <img class="timeline-card-icon" src="${favicon}" alt="${app.name}" onerror="this.src='logo.svg'">
+              <img class="timeline-card-icon" src="${favicon}" alt="${app.name}" onerror="if(!this.dataset.err){this.dataset.err='1';this.src='logo.svg'}">
               <div>
                 <div class="timeline-card-name">${app.name}</div>
                 <div class="timeline-card-cat">${app.category || 'Other'}</div>
@@ -1848,6 +1851,15 @@ loadApps()
   }
 
   raf = requestAnimationFrame(draw)
+
+  // Pause animation when tab hidden → saves CPU/GPU, prevents memory-pressure reloads
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf)
+    } else {
+      raf = requestAnimationFrame(draw)
+    }
+  })
 })()
 </script>
 </body>
