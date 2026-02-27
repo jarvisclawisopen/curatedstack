@@ -1,44 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#5b21b6"/>
-      <stop offset="0.55" stop-color="#7c3aed"/>
-      <stop offset="1" stop-color="#0369a1"/>
+      <stop stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#065f46"/>
     </linearGradient>
-    <linearGradient id="bar-hi" x1="14" y1="0" x2="66" y2="0" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#ffffff"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.80)"/>
+    <linearGradient id="l1" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#34d399"/>
     </linearGradient>
-    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="38" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#ffffff" stop-opacity="0.10"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    <linearGradient id="l2" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#10b981"/>
     </linearGradient>
-    <filter id="glow-bar" x="-20%" y="-50%" width="140%" height="200%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+    <linearGradient id="l3" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#047857"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-80%" width="140%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
   </defs>
 
-  <!-- Background badge -->
+  <!-- Badge background -->
   <rect width="80" height="80" rx="18" fill="url(#bg)"/>
-
   <!-- Top gloss -->
-  <rect x="0" y="0" width="80" height="38" rx="18" fill="url(#shine)"/>
+  <rect x="0" y="0" width="80" height="40" rx="18" fill="url(#shine)"/>
 
-  <!-- Stack bar — bottom (faint) -->
-  <rect x="14" y="54" width="52" height="8" rx="4" fill="white" opacity="0.22"/>
+  <!-- Stack layer 3 — bottom, smallest, faintest -->
+  <rect x="20" y="57" width="40" height="7" rx="2" fill="url(#l3)" opacity="0.45"/>
 
-  <!-- Stack bar — middle highlight (curated/selected) -->
-  <rect x="14" y="41" width="42" height="8" rx="4" fill="url(#bar-hi)" filter="url(#glow-bar)"/>
+  <!-- Stack layer 2 — middle -->
+  <rect x="14" y="45" width="52" height="7" rx="2" fill="url(#l2)" opacity="0.70"/>
 
-  <!-- Checkmark on highlighted bar -->
-  <path d="M59.5 43.5 L63.5 47.5 L71 40" stroke="white" stroke-width="2.8"
-        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <!-- Stack layer 1 — top, brightest (curated/selected) -->
+  <rect x="12" y="33" width="56" height="7" rx="2" fill="url(#l1)" filter="url(#glow)"/>
 
-  <!-- Stack bar — top (faint) -->
-  <rect x="14" y="28" width="52" height="8" rx="4" fill="white" opacity="0.22"/>
+  <!-- Corner bracket top-left — code/terminal feel -->
+  <path d="M12 22 L12 16 L18 16" stroke="#34d399" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
 
-  <!-- 4-point sparkle top-right -->
-  <path d="M66 17 L67.2 14 L68.4 17 L71.4 18.2 L68.4 19.4 L67.2 22.4 L66 19.4 L63 18.2 Z"
-        fill="white" opacity="0.75"/>
+  <!-- Corner bracket bottom-right -->
+  <path d="M62 16 L68 16 L68 22" stroke="#34d399" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
 </svg>

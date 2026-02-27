@@ -1,16 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#5b21b6"/>
-      <stop offset="1" stop-color="#0369a1"/>
+      <stop stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#065f46"/>
     </linearGradient>
+    <linearGradient id="l1" x1="5" y1="0" x2="27" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-100%" width="160%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
   <rect width="32" height="32" rx="7" fill="url(#bg)"/>
-  <!-- bars -->
-  <rect x="5" y="10" width="22" height="3.5" rx="1.75" fill="white" opacity="0.28"/>
-  <rect x="5" y="15.5" width="16" height="3.5" rx="1.75" fill="white"/>
-  <rect x="5" y="21" width="22" height="3.5" rx="1.75" fill="white" opacity="0.28"/>
-  <!-- checkmark -->
-  <path d="M23 16 L25 18.2 L28.5 13.5" stroke="white" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Stack layers -->
+  <rect x="8"  y="22" width="16" height="3" rx="1" fill="#059669" opacity="0.45"/>
+  <rect x="5"  y="17" width="22" height="3" rx="1" fill="#059669" opacity="0.70"/>
+  <rect x="5"  y="12" width="22" height="3" rx="1" fill="url(#l1)" filter="url(#glow)"/>
+  <!-- Code brackets -->
+  <path d="M5 9 L5 7 L8 7" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  <path d="M24 7 L27 7 L27 9" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
 </svg>

@@ -26,13 +26,13 @@
 
       --glass-bg:     rgba(255,255,255,0.06);
       --glass-bg-h:   rgba(255,255,255,0.11);
-      --glass-modal:  rgba(15,12,41,0.82);
-      --glass-border: rgba(255,255,255,0.11);
+      --glass-modal:  rgba(3,15,10,0.88);
+      --glass-border: rgba(255,255,255,0.10);
       --glass-bdr-h:  rgba(var(--accent-rgb),0.42);
       --blur:         16px;
       --blur-modal:   30px;
 
-      --nav-bg:       rgba(10,8,30,0.65);
+      --nav-bg:       rgba(2,10,7,0.70);
       --sh-card:      0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.06) inset;
       --sh-hover:     0 8px 40px rgba(0,0,0,0.50), 0 0 0 1px rgba(var(--accent-rgb),0.28);
       --sh-modal:     0 28px 90px rgba(0,0,0,0.65);
@@ -55,18 +55,18 @@
       --accent:       #059669;
       --accent-2:     #0d9488;
       --accent-rgb:   5,150,105;
-      --text:         rgba(15,10,40,0.92);
-      --text-muted:   rgba(15,10,40,0.52);
-      --text-faint:   rgba(15,10,40,0.30);
+      --text:         rgba(5,46,22,0.92);
+      --text-muted:   rgba(5,46,22,0.55);
+      --text-faint:   rgba(5,46,22,0.32);
       --glass-bg:     rgba(255,255,255,0.55);
       --glass-bg-h:   rgba(255,255,255,0.75);
-      --glass-modal:  rgba(248,246,255,0.90);
-      --glass-border: rgba(100,80,200,0.13);
+      --glass-modal:  rgba(240,253,249,0.92);
+      --glass-border: rgba(5,150,105,0.15);
       --glass-bdr-h:  rgba(var(--accent-rgb),0.35);
-      --nav-bg:       rgba(240,238,255,0.72);
-      --sh-card:      0 4px 24px rgba(80,60,180,0.08), 0 1px 0 rgba(255,255,255,0.7) inset;
-      --sh-hover:     0 8px 40px rgba(80,60,180,0.16), 0 0 0 1px rgba(var(--accent-rgb),0.20);
-      --sh-modal:     0 28px 90px rgba(60,40,160,0.22);
+      --nav-bg:       rgba(236,253,245,0.80);
+      --sh-card:      0 4px 24px rgba(5,150,105,0.07), 0 1px 0 rgba(255,255,255,0.7) inset;
+      --sh-hover:     0 8px 40px rgba(5,150,105,0.14), 0 0 0 1px rgba(var(--accent-rgb),0.20);
+      --sh-modal:     0 28px 90px rgba(5,150,105,0.18);
       --skel-from:    rgba(0,0,0,0.04);
       --skel-to:      rgba(0,0,0,0.10);
     }
@@ -97,11 +97,11 @@
 
     [data-theme="dark"] body,
     [data-theme="dark"] {
-      background: #0f0c29;
+      background: #030f0a;
     }
 
     [data-theme="light"] {
-      background: #f0eeff;
+      background: #f0fdf9;
     }
 
     body::before {
@@ -133,7 +133,7 @@
     .orb-2 {
       width: 400px; height: 400px;
       bottom: -80px; right: -80px;
-      background: radial-gradient(circle, rgba(56,189,248,0.14) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(52,211,153,0.14) 0%, transparent 70%);
     }
     [data-theme="light"] .orb-1 { background: radial-gradient(circle,rgba(5,150,105,0.09) 0%,transparent 70%); }
     [data-theme="light"] .orb-2 { background: radial-gradient(circle,rgba(13,148,136,0.07) 0%,transparent 70%); }
@@ -442,8 +442,8 @@
       background-position: right 12px center;
       min-width: 160px;
     }
-    .filter-select option { background: #1a1040; color: #fff; }
-    [data-theme="light"] .filter-select option { background: #f0eeff; color: #0f0a28; }
+    .filter-select option { background: #061410; color: #fff; }
+    [data-theme="light"] .filter-select option { background: #f0fdf9; color: #052e16; }
     .filter-select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.15);
@@ -586,11 +586,11 @@
       color: var(--text-muted); white-space: nowrap;
       transition: background 0.2s, color 0.3s;
     }
-    [data-theme="light"] .tag { background: rgba(80,60,180,0.07); border-color: rgba(80,60,180,0.12); }
+    [data-theme="light"] .tag { background: rgba(5,150,105,0.07); border-color: rgba(5,150,105,0.14); }
     .tag.pricing { font-weight: 600; border-color: transparent; color: #fff; }
     .tag.pricing.free     { background: rgba(34,197,94,0.28);  border-color: rgba(34,197,94,0.40); }
     .tag.pricing.paid     { background: rgba(239,68,68,0.25);   border-color: rgba(239,68,68,0.38); }
-    .tag.pricing.freemium { background: rgba(56,189,248,0.25);  border-color: rgba(56,189,248,0.38); }
+    .tag.pricing.freemium { background: rgba(20,184,166,0.25);  border-color: rgba(20,184,166,0.38); }
     .tag.pricing.trial    { background: rgba(251,191,36,0.28);  border-color: rgba(251,191,36,0.42); }
     .tag.pricing.unknown  { background: rgba(148,163,184,0.22); border-color: rgba(148,163,184,0.32); }
 
@@ -710,7 +710,7 @@
     }
     .modal::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.7) 35%, rgba(56,189,248,0.6) 65%, transparent);
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.7) 35%, rgba(52,211,153,0.6) 65%, transparent);
       pointer-events: none; z-index: 1;
     }
 
@@ -1299,7 +1299,7 @@
       .app-card, .navbar, .filter-select, .search-input, .modal { background: rgba(20,14,50,0.92) !important; }
       [data-theme="light"] .app-card, [data-theme="light"] .navbar,
       [data-theme="light"] .filter-select, [data-theme="light"] .search-input,
-      [data-theme="light"] .modal { background: rgba(248,246,255,0.97) !important; }
+      [data-theme="light"] .modal { background: rgba(240,253,249,0.97) !important; }
     }
   </style>
 </head>
@@ -2080,18 +2080,18 @@ loadApps()
   const canvas = document.getElementById('bg-canvas')
   const ctx    = canvas.getContext('2d')
 
-  // Aurora blobs config
+  // Aurora blobs config — emerald/teal palette
   const DARK_BLOBS = [
-    { x: 0.15, y: 0.12, r: 0.45, color: [124, 58, 237],  speed: 0.00018, phase: 0 },
-    { x: 0.80, y: 0.75, r: 0.38, color: [56, 189, 248],  speed: 0.00013, phase: 2.1 },
-    { x: 0.55, y: 0.40, r: 0.30, color: [167, 80, 220],  speed: 0.00022, phase: 4.3 },
-    { x: 0.25, y: 0.80, r: 0.25, color: [30, 120, 220],  speed: 0.00016, phase: 1.5 },
+    { x: 0.15, y: 0.12, r: 0.45, color: [16, 185, 129],  speed: 0.00018, phase: 0 },
+    { x: 0.80, y: 0.75, r: 0.38, color: [52, 211, 153],  speed: 0.00013, phase: 2.1 },
+    { x: 0.55, y: 0.40, r: 0.30, color: [6, 78, 59],     speed: 0.00022, phase: 4.3 },
+    { x: 0.25, y: 0.80, r: 0.25, color: [20, 184, 166],  speed: 0.00016, phase: 1.5 },
   ]
   const LIGHT_BLOBS = [
-    { x: 0.15, y: 0.12, r: 0.45, color: [167, 139, 250], speed: 0.00018, phase: 0 },
-    { x: 0.80, y: 0.75, r: 0.38, color: [56, 189, 248],  speed: 0.00013, phase: 2.1 },
-    { x: 0.55, y: 0.40, r: 0.30, color: [200, 150, 255], speed: 0.00022, phase: 4.3 },
-    { x: 0.25, y: 0.80, r: 0.25, color: [100, 180, 255], speed: 0.00016, phase: 1.5 },
+    { x: 0.15, y: 0.12, r: 0.45, color: [5, 150, 105],   speed: 0.00018, phase: 0 },
+    { x: 0.80, y: 0.75, r: 0.38, color: [52, 211, 153],  speed: 0.00013, phase: 2.1 },
+    { x: 0.55, y: 0.40, r: 0.30, color: [13, 148, 136],  speed: 0.00022, phase: 4.3 },
+    { x: 0.25, y: 0.80, r: 0.25, color: [16, 185, 129],  speed: 0.00016, phase: 1.5 },
   ]
 
   // Floating particles
@@ -2125,13 +2125,15 @@ loadApps()
   function draw(ts) {
     t = ts
     const W = canvas.width, H = canvas.height
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light'
-    const isWin95 = document.documentElement.getAttribute('data-theme') === 'win95'
+    const themeNow = document.documentElement.getAttribute('data-theme')
+    const isLight    = themeNow === 'light'
+    const isWin95    = themeNow === 'win95'
+    const isTerminal = themeNow === 'terminal'
 
     ctx.clearRect(0, 0, W, H)
 
-    if (isWin95) {
-      // Win95: solid teal — nothing to draw
+    if (isWin95 || isTerminal) {
+      // Win95/Terminal: background handled elsewhere — nothing to draw
       raf = requestAnimationFrame(draw)
       return
     }
@@ -2139,13 +2141,13 @@ loadApps()
     // ── Base gradient ──
     const base = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.8)
     if (isLight) {
-      base.addColorStop(0, '#f0eeff')
-      base.addColorStop(0.5, '#e8f4ff')
-      base.addColorStop(1, '#f5f0ff')
+      base.addColorStop(0, '#f0fdf9')
+      base.addColorStop(0.5, '#ecfdf5')
+      base.addColorStop(1, '#f0fdfa')
     } else {
-      base.addColorStop(0, '#0f0c29')
-      base.addColorStop(0.5, '#1a1040')
-      base.addColorStop(1, '#24243e')
+      base.addColorStop(0, '#030f0a')
+      base.addColorStop(0.5, '#061410')
+      base.addColorStop(1, '#071a12')
     }
     ctx.fillStyle = base
     ctx.fillRect(0, 0, W, H)
@@ -2179,8 +2181,8 @@ loadApps()
       ctx.beginPath()
       ctx.arc(p.x * W, p.y * H, p.r, 0, Math.PI * 2)
       ctx.fillStyle = isLight
-        ? `rgba(120,80,220,${a})`
-        : `rgba(180,140,255,${a})`
+        ? `rgba(5,150,105,${a})`
+        : `rgba(52,211,153,${a})`
       ctx.fill()
     })
 
