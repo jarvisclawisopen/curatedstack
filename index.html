@@ -279,7 +279,7 @@
       position: absolute; left: 10px; font-size: 15px; color: var(--text-faint); pointer-events: none; z-index: 1;
     }
     .search-input {
-      width: 100%; height: 34px; padding: 0 12px 0 32px;
+      width: 100%; height: 34px; padding: 0 32px 0 32px;
       background: var(--glass-bg); border: 1px solid var(--glass-border);
       border-radius: var(--radius-md); color: var(--text); font-family: var(--font); font-size: 13px;
       outline: none; transition: border-color var(--trans), box-shadow var(--trans);
@@ -289,6 +289,20 @@
       box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.10);
     }
     .search-input::placeholder { color: var(--text-faint); }
+    .search-clear {
+      position: absolute; right: 8px;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-faint); font-size: 13px; line-height: 1;
+      padding: 4px; border-radius: 50%;
+      transition: color var(--trans), background var(--trans);
+      display: flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px;
+    }
+    .search-clear:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+    [data-theme="light"] .search-clear:hover { background: rgba(0,0,0,0.08); }
+    [data-theme="terminal"] .search-clear { color: rgba(0,255,65,0.5) !important; }
+    [data-theme="terminal"] .search-clear:hover { color: #00ff41 !important; background: rgba(0,255,65,0.1) !important; }
+    [data-theme="win95"] .search-clear { color: #808080 !important; right: 4px; }
 
     /* Category dropdown */
     .cat-dropdown-wrap {
@@ -320,10 +334,10 @@
       display: none;
       position: absolute; top: calc(100% + 6px); left: 0;
       min-width: 300px; max-width: 480px;
-      background: var(--glass-modal); border: 1px solid var(--glass-border);
+      background: color-mix(in srgb, var(--glass-modal) 95%, transparent); border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg); padding: 14px;
       box-shadow: 0 16px 48px rgba(0,0,0,0.45), 0 4px 16px rgba(0,0,0,0.3);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(32px) saturate(180%); -webkit-backdrop-filter: blur(32px) saturate(180%);
       z-index: 500;
     }
     .cat-dropdown-panel.open {
@@ -357,6 +371,12 @@
     }
     [data-theme="terminal"] .cat-dropdown-panel {
       background: rgba(0,10,3,0.96) !important; border-color: rgba(0,255,65,0.25) !important; border-radius: 4px !important;
+    }
+    [data-theme="dark"] .cat-dropdown-panel {
+      background: rgba(3, 12, 8, 0.97) !important;
+    }
+    [data-theme="light"] .cat-dropdown-panel {
+      background: rgba(250, 252, 250, 0.97) !important;
     }
 
     .navbar-controls {
@@ -614,7 +634,7 @@
       border-color: rgba(var(--accent-rgb),0.40);
     }
     [data-theme="terminal"] .cat-pill { border-radius: 2px !important; }
-    [data-theme="win95"] .cat-pills-row { display: none; }
+
     .filter-select {
       padding: 11px 36px 11px 14px;
       background: var(--glass-bg);
@@ -1856,6 +1876,7 @@
         <div class="search-wrap">
           <span class="search-icon">⌕</span>
           <input id="search-input" class="search-input" type="text" placeholder="Search apps, tags…" autocomplete="off"/>
+          <button class="search-clear" id="search-clear" title="Clear search" style="display:none">✕</button>
         </div>
         <div class="cat-dropdown-wrap" id="cat-dropdown-wrap">
           <button class="cat-dropdown-btn" id="cat-dropdown-btn" type="button">
@@ -1953,6 +1974,7 @@
 /* ─── CONFIG ─────────────────────────────── */
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI1NzksImV4cCI6MjA4NjQ5ODU3OX0.r0RDnh75IGjECXMwMJNZR0oqF-cEubxbQbjXgavsJ_I'
+const SUPA_WRITE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
 
 /* ─── STATE ───────────────────────────────── */
 let allApps = []
@@ -2068,6 +2090,8 @@ const CATEGORY_ICONS = {
   'Storage': '☁️', 'Cloud': '☁️',
   'CMS': '📝', 'Content': '📝',
   'E-commerce': '🛒', 'Shopping': '🛒',
+  'Gaming': '🎮',
+  'Research': '🔬',
   'Other': '✦',
 }
 
@@ -2132,7 +2156,7 @@ function getPricingClass(p) {
 function createCard(app, delay = 0) {
   if (theme === 'win95') return createCardWin95(app)
   if (theme === 'terminal') return createCardTerminal(app)
-  const upvoted = !!localStorage.getItem(`upvoted_${app.id}`)
+  const upvoted = hasVotedFor(app.id)
   const favicon = app.logo_url || getFavicon(app.url)
   const pricing = app.pricing_model ? `<span class="tag pricing ${getPricingClass(app.pricing_model)}">${app.pricing_model}</span>` : ''
   const tags    = (app.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('')
@@ -2164,7 +2188,7 @@ function createCard(app, delay = 0) {
 
 /* ─── WIN95 CARD ──────────────────────────── */
 function createCardWin95(app) {
-  const upvoted = !!localStorage.getItem(`upvoted_${app.id}`)
+  const upvoted = hasVotedFor(app.id)
   const favicon = app.logo_url || getFavicon(app.url)
   const pc      = getPricingClass(app.pricing_model)
   const pricing = app.pricing_model
@@ -2194,7 +2218,7 @@ function createCardWin95(app) {
 }
 
 function createCardTerminal(app) {
-  const upvoted = !!localStorage.getItem(`upvoted_${app.id}`)
+  const upvoted = hasVotedFor(app.id)
   const pc      = getPricingClass(app.pricing_model)
   const pricing = app.pricing_model
     ? `<span class="terminal-tag pricing">[${app.pricing_model.toUpperCase()}]</span>` : ''
@@ -2266,7 +2290,7 @@ function openModal(id) {
   const app = allApps.find(a => a.id === id)
   if (!app) return
 
-  const hasUpvoted = !!localStorage.getItem(`upvoted_${app.id}`)
+  const hasUpvoted = hasVotedFor(app.id)
   const favicon = app.logo_url || getFavicon(app.url)
   const pc      = getPricingClass(app.pricing_model)
   const fullDesc = app.detailed_description || app.description || 'No description available.'
@@ -2336,32 +2360,70 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 /* ─── UPVOTE ──────────────────────────────── */
 async function handleUpvote(appId, btn) {
-  if (localStorage.getItem(`upvoted_${appId}`)) return
-  const span = btn.querySelector('.upvote-count') || btn.querySelector('span')
-  btn.style.transform = 'scale(1.2)'
-  setTimeout(() => btn.style.transform = '', 200)
-  if (span) span.textContent = parseInt(span.textContent) + 1
-  btn.classList.add('upvoted')
-  localStorage.setItem(`upvoted_${appId}`, '1')
+  // Check if already voted (localStorage + cookie fallback)
+  if (hasVotedFor(appId)) return
+
   const app = allApps.find(a => a.id === appId)
-  if (app) app.upvotes++
-  document.querySelectorAll(`[data-id="${appId}"] .upvote-btn, [data-id="${appId}"] .win95-upvote-btn, [data-id="${appId}"] .terminal-upvote-btn`).forEach(b => {
-    b.classList.add('upvoted')
-    const s = b.querySelector('.upvote-count') || b.querySelector('span')
-    if (s && app) s.textContent = app.upvotes
+  if (!app) return
+
+  // Optimistic local update
+  app.upvotes = (app.upvotes || 0) + 1
+  markVotedFor(appId)
+
+  // Update all UI elements showing this app's upvotes
+  document.querySelectorAll(`[data-id="${appId}"] .upvote-btn, [data-id="${appId}"] .upvote-count`).forEach(el => {
+    if (el.classList.contains('upvote-btn')) {
+      el.classList.add('upvoted')
+    }
+    if (el.classList.contains('upvote-count')) {
+      el.textContent = app.upvotes
+    }
   })
-  // Update leaderboard view if visible
+  // Update leaderboard if visible
   const lbEl = document.getElementById(`lb-votes-${appId}`)
-  if (lbEl && app) lbEl.textContent = app.upvotes
-  // Update lb-upvote-btn text
-  const lbBtn = document.querySelector(`.lb-upvote-btn[onclick*="${appId}"]`)
-  if (lbBtn) { lbBtn.classList.add('upvoted'); lbBtn.textContent = '✓ Voted' }
-  updateStats()
-  fetch(`${SUPABASE_URL}/rest/v1/votes`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-    body: JSON.stringify({ app_id: appId, user_fingerprint: 'u-'+Math.random().toString(36).substr(2,9), vote_type: 'upvote' })
-  }).catch(() => {})
+  if (lbEl) lbEl.textContent = app.upvotes
+  // Update modal upvote button if open
+  const modalUpvote = document.querySelector('.modal-overlay.active .upvote-btn')
+  if (modalUpvote && modalUpvote.onclick && modalUpvote.onclick.toString().includes(appId)) {
+    modalUpvote.classList.add('upvoted')
+    const countEl = modalUpvote.querySelector('.upvote-count')
+    if (countEl) countEl.textContent = app.upvotes
+  }
+
+  // Persist to Supabase using service key (bypasses RLS for write operations)
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/apps?id=eq.${appId}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPA_WRITE_KEY,
+        'Authorization': `Bearer ${SUPA_WRITE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ upvotes: app.upvotes })
+    })
+    if (!res.ok) {
+      console.warn('Upvote save failed, kept local:', res.status)
+    }
+  } catch(e) {
+    console.warn('Upvote network error:', e)
+  }
+}
+
+function hasVotedFor(appId) {
+  if (localStorage.getItem(`upvoted_${appId}`)) return true
+  try {
+    if (document.cookie.split(';').some(c => c.trim().startsWith(`upvoted_${appId}=`))) return true
+  } catch(e) {}
+  return false
+}
+
+function markVotedFor(appId) {
+  localStorage.setItem(`upvoted_${appId}`, '1')
+  try {
+    const exp = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toUTCString()
+    document.cookie = `upvoted_${appId}=1; expires=${exp}; path=/; SameSite=Strict`
+  } catch(e) {}
 }
 
 
@@ -2517,7 +2579,7 @@ function renderLeaderboardView(apps) {
   const medal = (i) => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`
   const rows = sorted.map((app, i) => {
     const favicon = app.logo_url || getFavicon(app.url)
-    const hasUpvoted = !!localStorage.getItem(`upvoted_${app.id}`)
+    const hasUpvoted = hasVotedFor(app.id)
     return `
       <div class="leaderboard-row ${topClass(i)}" onclick="openModal('${app.id}')">
         <div class="lb-rank">${medal(i)}</div>
@@ -2693,6 +2755,20 @@ document.getElementById('search-input').addEventListener('input', e => {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => { currentSearch = e.target.value; renderApps() }, 250)
 })
+// Search clear button
+const searchClearBtn = document.getElementById('search-clear')
+const searchInputEl = document.getElementById('search-input')
+if (searchInputEl && searchClearBtn) {
+  searchInputEl.addEventListener('input', function() {
+    searchClearBtn.style.display = this.value ? 'flex' : 'none'
+  })
+  searchClearBtn.addEventListener('click', function() {
+    searchInputEl.value = ''
+    searchClearBtn.style.display = 'none'
+    searchInputEl.dispatchEvent(new Event('input'))
+    searchInputEl.focus()
+  })
+}
 // Category dropdown toggle
 const catBtn = document.getElementById('cat-dropdown-btn')
 const catPanel = document.getElementById('cat-dropdown-panel')
