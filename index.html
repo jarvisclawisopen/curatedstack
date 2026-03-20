@@ -3488,6 +3488,37 @@ function animateCounter (el) {
   }
   @keyframes news-spin { to { transform: rotate(360deg); } }
 
+  /* Mobile backdrop */
+  #news-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1040;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+  #news-backdrop.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Close button (mobile only by default) */
+  #news-panel-close {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.15s;
+    line-height: 1;
+    margin-left: auto;
+  }
+  #news-panel-close:hover { color: var(--text); }
+
   /* Desktop: push content when panel open */
   @media (min-width: 768px) {
     body.news-panel-open .container,
@@ -3498,20 +3529,94 @@ function animateCounter (el) {
     }
   }
 
-  /* Mobile: hide panel toggle completely */
+  /* ── MOBILE: Bottom Sheet ── */
   @media (max-width: 767px) {
-    #news-panel-toggle { display: none; }
-    #news-panel { display: none; }
+    /* FAB button – bottom right corner */
+    #news-panel-toggle {
+      position: fixed;
+      right: 16px;
+      bottom: 20px;
+      top: auto;
+      transform: none !important;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      font-size: 22px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      border-radius: 50%;
+      display: flex !important;
+    }
+    #news-panel-toggle.panel-open {
+      right: 16px; /* stays in place on mobile */
+    }
+
+    /* Panel becomes a bottom sheet */
+    #news-panel {
+      display: flex !important;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 88vh;
+      border-left: none;
+      border-top: 1px solid var(--glass-border);
+      border-radius: 20px 20px 0 0;
+      transform: translateY(100%);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+    }
+    #news-panel.open {
+      transform: translateY(0);
+    }
+
+    /* Drag handle */
+    #news-panel::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 4px;
+      background: var(--glass-border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+
+    /* Close button visible on mobile */
+    #news-panel-close {
+      display: flex !important;
+    }
+
+    /* Bigger touch targets for pills */
+    .news-filter-pill {
+      font-size: 12px;
+      padding: 6px 14px;
+    }
+
+    /* Bigger news items */
+    .news-item {
+      padding: 12px 16px;
+    }
+    .news-title {
+      font-size: 13.5px;
+    }
+    .news-desc {
+      font-size: 12px;
+      -webkit-line-clamp: 3;
+    }
   }
 </style>
 
-<!-- News Panel Toggle Button -->
+<!-- Mobile backdrop overlay -->
+<div id="news-backdrop"></div>
+
+<!-- News Panel Toggle Button / Mobile FAB -->
 <button id="news-panel-toggle" title="Daily Brief">📰</button>
 
 <!-- News Panel -->
 <div id="news-panel">
   <div id="news-panel-header">
     <span>Daily Brief</span>
+    <button id="news-panel-close" title="Zavrieť">✕</button>
     <span id="news-last-updated"></span>
   </div>
   <div id="news-category-filters">
@@ -3546,12 +3651,16 @@ function animateCounter (el) {
 
   const panel        = document.getElementById('news-panel');
   const toggleBtn    = document.getElementById('news-panel-toggle');
+  const closeBtn     = document.getElementById('news-panel-close');
+  const backdrop     = document.getElementById('news-backdrop');
   const feed         = document.getElementById('news-feed');
   const lastUpdated  = document.getElementById('news-last-updated');
   const filterPills  = document.querySelectorAll('.news-filter-pill');
 
   let allNews       = [];
   let activeFilter  = 'All';
+
+  const isMobile = () => window.innerWidth < 768;
 
   /* ── Panel state ───────────────────────── */
   function isPanelOpen () {
@@ -3561,13 +3670,25 @@ function animateCounter (el) {
     localStorage.setItem('cs_news_panel_open', open ? 'true' : 'false');
     panel.classList.toggle('open', open);
     toggleBtn.classList.toggle('panel-open', open);
-    document.body.classList.toggle('news-panel-open', open);
+    document.body.classList.toggle('news-panel-open', open && !isMobile());
+    // mobile backdrop
+    if (isMobile()) {
+      if (open) {
+        backdrop.style.display = 'block';
+        requestAnimationFrame(() => backdrop.classList.add('active'));
+      } else {
+        backdrop.classList.remove('active');
+        setTimeout(() => { backdrop.style.display = 'none'; }, 300);
+      }
+    }
   }
 
   toggleBtn.addEventListener('click', () => setPanelOpen(!isPanelOpen()));
+  if (closeBtn) closeBtn.addEventListener('click', () => setPanelOpen(false));
+  backdrop.addEventListener('click', () => setPanelOpen(false));
 
-  // Restore on load (desktop only)
-  if (window.innerWidth >= 768) {
+  // Restore on load (desktop only — mobile always starts closed)
+  if (!isMobile()) {
     setPanelOpen(isPanelOpen());
   }
 
