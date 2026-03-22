@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <style>
     /* ══════════════════════════════════════════
@@ -257,7 +258,7 @@
       display: flex; align-items: center; gap: 8px;
       text-decoration: none; flex-shrink: 0;
     }
-    .navbar-brand img { height: 28px; width: auto; max-width: 180px; object-fit: contain; }
+    .navbar-brand img { height: 24px; width: auto; max-width: 180px; object-fit: contain; }
     .brand-gradient {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       -webkit-background-clip: text;
@@ -686,6 +687,7 @@
       box-shadow: 0 0 0 1px rgba(var(--accent-rgb),0.20), 0 4px 14px rgba(var(--accent-rgb),0.15);
     }
     .cat-pill .cat-icon { font-size: 13px; line-height: 1; }
+    .cat-icon svg { width: 14px; height: 14px; vertical-align: middle; display: inline-block; }
     .cat-pill .cat-count {
       font-size: 10px; font-weight: 700;
       background: rgba(var(--accent-rgb),0.15);
@@ -1826,6 +1828,12 @@
 
       /* Theme toggle compact */
       .theme-toggle { height: 30px !important; padding: 0 10px !important; font-size: 11px !important; border-radius: 16px !important; }
+      .theme-toggle .t-label { display: none !important; }
+
+      /* Navbar breathing room */
+      .navbar-brand img { height: 22px !important; max-width: 120px !important; }
+      .view-switcher { gap: 3px !important; }
+      .navbar-controls { gap: 3px !important; }
 
       /* Category dropdown mobile styles added below */
 
@@ -2131,6 +2139,7 @@ const orb2 = document.getElementById('orb2')
 let rafP = false
 document.addEventListener('mousemove', e => {
   if (theme === 'win95' || theme === 'terminal') return
+  if (window.matchMedia('(pointer: coarse)').matches) return
   const x = e.clientX / window.innerWidth  - 0.5
   const y = e.clientY / window.innerHeight - 0.5
   if (!rafP) {
@@ -2146,25 +2155,37 @@ document.addEventListener('mousemove', e => {
 /* ─── HELPERS ─────────────────────────────── */
 /* ─── CATEGORY PILLS ──────────────────────── */
 const CATEGORY_ICONS = {
-  'AI': '🤖', 'AI Tools': '🤖', 'Artificial Intelligence': '🤖',
-  'Design': '🎨', 'UI/UX': '🎨', 'Design Tools': '🎨',
-  'Development': '💻', 'Dev Tools': '💻', 'Developer Tools': '💻', 'Coding': '💻',
-  'Productivity': '⚡', 'Productivity Tools': '⚡',
-  'Marketing': '📣', 'Marketing Tools': '📣', 'SEO': '📣',
-  'Analytics': '📊', 'Data': '📊', 'Data Analytics': '📊',
-  'Communication': '💬', 'Collaboration': '💬',
-  'Finance': '💰', 'Fintech': '💰', 'Crypto': '💰',
-  'Security': '🔒', 'Privacy': '🔒',
-  'Media': '🎬', 'Video': '🎬', 'Audio': '🎵',
-  'Education': '📚', 'Learning': '📚',
-  'Automation': '🔄', 'No-Code': '🔄',
-  'Social': '🌐', 'Community': '🌐',
-  'Storage': '☁️', 'Cloud': '☁️',
-  'CMS': '📝', 'Content': '📝',
-  'E-commerce': '🛒', 'Shopping': '🛒',
-  'Gaming': '🎮',
-  'Research': '🔬',
-  'Other': '✦',
+  'All': 'layout-grid',
+  'AI': 'cpu', 'AI Tools': 'cpu', 'Artificial Intelligence': 'cpu',
+  'Design': 'pen-tool', 'UI/UX': 'pen-tool', 'Design Tools': 'pen-tool',
+  'Development': 'code-2', 'Dev Tools': 'code-2', 'Developer Tools': 'code-2', 'Coding': 'code-2',
+  'Productivity': 'zap', 'Productivity Tools': 'zap',
+  'Marketing': 'megaphone', 'Marketing Tools': 'megaphone', 'SEO': 'megaphone',
+  'Analytics': 'bar-chart-2', 'Data': 'bar-chart-2', 'Data Analytics': 'bar-chart-2',
+  'Communication': 'message-square', 'Collaboration': 'users',
+  'Finance': 'trending-up', 'Fintech': 'trending-up', 'Crypto': 'trending-up',
+  'Security': 'shield', 'Privacy': 'shield',
+  'Media': 'film', 'Video': 'film', 'Audio': 'music',
+  'Education': 'book-open', 'Learning': 'book-open',
+  'Automation': 'repeat', 'No-Code': 'repeat',
+  'Social': 'globe', 'Community': 'globe',
+  'Storage': 'cloud', 'Cloud': 'cloud',
+  'CMS': 'file-text', 'Content': 'file-text',
+  'E-commerce': 'shopping-cart', 'Shopping': 'shopping-cart',
+  'Gaming': 'gamepad-2',
+  'Research': 'microscope',
+  'Other': 'box',
+}
+
+function getCatIcon(category) {
+  const name = CATEGORY_ICONS[category] || 'box';
+  const icon = (typeof lucide !== 'undefined') && lucide.icons && lucide.icons[name];
+  if (!icon) return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
+  const svgContent = icon[1].map(([tag, attrs]) => {
+    const attrStr = Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ');
+    return `<${tag} ${attrStr}/>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgContent}</svg>`;
 }
 
 function renderCatPills(cats) {
@@ -2172,15 +2193,14 @@ function renderCatPills(cats) {
   if (!el) return
   const totalAll = allApps.length
   const allPill = `<button class="cat-pill ${currentCategory === 'all' ? 'active' : ''}" onclick="setCat('all')">
-    <span class="cat-icon">✦</span>
+    <span class="cat-icon">${getCatIcon('All')}</span>
     <span>All</span>
     <span class="cat-count">${totalAll}</span>
   </button>`
   const rest = cats.map(c => {
     const count = allApps.filter(a => a.category === c).length
-    const icon = CATEGORY_ICONS[c] || '✦'
     return `<button class="cat-pill ${currentCategory === c ? 'active' : ''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">
-      <span class="cat-icon">${icon}</span>
+      <span class="cat-icon">${getCatIcon(c)}</span>
       <span>${c}</span>
       <span class="cat-count">${count}</span>
     </button>`
@@ -2197,11 +2217,10 @@ function setCat(cat) {
   const catPanel2 = document.getElementById('cat-dropdown-panel')
   if (lbl) {
     if (cat === 'all') {
-      lbl.textContent = '✦ All'
+      lbl.innerHTML = getCatIcon('All') + ' All'
       if (dropBtn) dropBtn.classList.remove('active-filter')
     } else {
-      const icon = CATEGORY_ICONS[cat] || '✦'
-      lbl.textContent = icon + ' ' + cat
+      lbl.innerHTML = getCatIcon(cat) + ' ' + cat
       if (dropBtn) dropBtn.classList.add('active-filter')
     }
   }
@@ -3686,6 +3705,10 @@ function animateCounter (el) {
       display: flex !important;
     }
 
+    /* Lang toggle full-width on mobile */
+    #news-lang-toggle { display: flex; justify-content: center; width: 100%; margin-bottom: 8px; }
+    #news-lang-toggle button { flex: 1; text-align: center; }
+
     /* Bigger touch targets for pills */
     .news-filter-pill {
       font-size: 12px;
@@ -3809,6 +3832,9 @@ function animateCounter (el) {
     localStorage.setItem('cs_news_lang', lang);
     langEnBtn.classList.toggle('active', lang === 'en');
     langSkBtn.classList.toggle('active', lang === 'sk');
+    activeFilter = 'All';
+    filterPills.forEach(p => p.classList.remove('active'));
+    filterPills.forEach(p => { if (p.dataset.cat === 'All') p.classList.add('active'); });
     renderNews();
   }
 
@@ -3873,6 +3899,11 @@ function animateCounter (el) {
     if (!hasAny) {
       feed.innerHTML = '<div class="news-empty">No news found.</div>';
       return;
+    }
+
+    // Sort each group by published_at descending
+    for (const grp of Object.values(groups)) {
+      grp.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
     }
 
     let html = '';
