@@ -2178,13 +2178,24 @@ const CATEGORY_ICONS = {
 
 function getCatIcon(category) {
   const name = CATEGORY_ICONS[category] || 'box';
-  const icon = (typeof lucide !== 'undefined') && lucide.icons && lucide.icons[name];
-  if (!icon) return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
-  const svgContent = icon[1].map(([tag, attrs]) => {
-    const attrStr = Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ');
-    return `<${tag} ${attrStr}/>`;
-  }).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgContent}</svg>`;
+  // Lucide UMD: lucide.Cpu is an array of [tag, attrs] pairs
+  function toPascal(str) {
+    return str.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('');
+  }
+  const fallback = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
+  if (typeof lucide === 'undefined') return fallback;
+  const iconData = lucide[toPascal(name)];
+  if (!iconData || !Array.isArray(iconData)) return fallback;
+  try {
+    // iconData is [[tag, attrs], [tag, attrs], ...]
+    const innerSvg = iconData.map(([tag, attrs]) => {
+      const attrStr = Object.entries(attrs || {}).map(([k, v]) => `${k}="${v}"`).join(' ');
+      return `<${tag} ${attrStr}/>`;
+    }).join('');
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${innerSvg}</svg>`;
+  } catch(e) {
+    return fallback;
+  }
 }
 
 function renderCatPills(cats) {
