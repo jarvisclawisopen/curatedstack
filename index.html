@@ -3499,7 +3499,7 @@ function animateCounter (el) {
     border: 1px solid var(--glass-border);
     border-radius: 12px;
     overflow: hidden;
-    margin-left: auto;
+    margin-left: 8px;
     margin-right: 8px;
     flex-shrink: 0;
   }
@@ -3581,8 +3581,8 @@ function animateCounter (el) {
   #news-panel-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 16px 12px;
+    gap: 6px;
+    padding: 12px 14px 10px;
     border-bottom: 1px solid var(--glass-border);
     flex-shrink: 0;
   }
@@ -3591,10 +3591,13 @@ function animateCounter (el) {
     font-size: 14px;
     color: var(--text);
     letter-spacing: 0.02em;
+    flex: 1;
   }
   #news-last-updated {
     font-size: 11px;
     color: var(--text-faint);
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   /* Category Filter Pills */
@@ -3850,9 +3853,9 @@ function animateCounter (el) {
       display: flex !important;
     }
 
-    /* Lang toggle full-width on mobile */
-    #news-lang-toggle { display: flex; justify-content: center; width: 100%; margin-bottom: 8px; }
-    #news-lang-toggle button { flex: 1; text-align: center; }
+    /* Lang toggle on mobile — keep compact, don't stretch full-width */
+    #news-lang-toggle { display: flex; margin-left: auto; margin-right: 8px; margin-bottom: 0; width: auto; }
+    #news-lang-toggle button { text-align: center; }
 
     /* Bigger touch targets for pills */
     .news-filter-pill {
@@ -3934,8 +3937,8 @@ function animateCounter (el) {
   let activeLang    = localStorage.getItem('cs_news_lang') || 'en';
 
   /* ── Slovak language detector ──────────── */
-  // Detect by TITLE only — description may be SK even for EN articles
-  const SK_PATTERN = /[ľĺŕťďňáčéíóšúýž]/i;
+  // Only true Slovak-specific characters (NOT é which appears in Pokémon/English)
+  const SK_PATTERN = /[ľĺŕťďňčšžýáíóúäô]/i;
   function detectLang (item) {
     return SK_PATTERN.test(item.title || '') ? 'sk' : 'en';
   }
@@ -4072,11 +4075,10 @@ function animateCounter (el) {
       html += `<div class="news-date-group"><div class="news-date-label">${label}</div>`;
       for (const n of groupItems) {
         const color = CAT_COLORS[n.category] || '#888';
-        // SK tab: use title_sk if available, fallback to title
-        // EN tab: always use title
-        const displayTitle = (activeLang === 'sk' && n.title_sk) ? n.title_sk : n.title;
-        // SK tab: show description (which is the SK translation)
-        // EN tab: only show description if it's not SK text
+        // title_sk column does not exist — always use title (EN)
+        const displayTitle = n.title;
+        // SK tab: show description always (may contain SK translation)
+        // EN tab: show description only if it doesn't contain SK-specific chars
         const showDesc = n.description && (activeLang === 'sk' || detectLang({ title: n.description }) === 'en');
         const desc = showDesc
           ? `<div class="news-desc">${escHtml(n.description)}</div>`
