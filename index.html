@@ -3966,7 +3966,7 @@ function animateCounter (el) {
     const t = item.title || '';
     if (SK_PATTERN.test(t)) return 'sk';
     // 'č' alone: only flag if word context suggests SK (e.g. "č" followed by typical SK endings)
-    if (/č[íúáa]|dní|nás|tých|ných|ého|nej|ove|ula|uje|ajú|ajú/i.test(t)) return 'sk';
+    if (/č[íúáa]|dní\b|nás\b|tých|ných|ého|nej\b|ove[^r]|ula[^t]|uje|ajú/i.test(t)) return 'sk';
     return 'en';
   }
 
