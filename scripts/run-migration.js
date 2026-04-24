@@ -1,7 +1,8 @@
+import 'dotenv/config';
 #!/usr/bin/env node
 
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
+const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY
 
 // We'll execute SQL statements individually since Supabase REST API
 // doesn't have a direct SQL execution endpoint. We'll use a workaround.

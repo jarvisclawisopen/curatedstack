@@ -1,8 +1,9 @@
+import 'dotenv/config';
 // Import new batch of 23 apps + fix weak detailed_descriptions
 // Run: node import-new-batch.js
 
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
+const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY
 
 // Random date between March 14-18, 2026
 function randomDate() {

@@ -1,7 +1,8 @@
+import 'dotenv/config';
 #!/usr/bin/env node
 
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI1NzksImV4cCI6MjA4NjQ5ODU3OX0.r0RDnh75IGjECXMwMJNZR0oqF-cEubxbQbjXgavsJ_I'
+const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY
 
 async function fetchApps() {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/apps?select=id,name,url,logo_url&logo_url=is.null`, {

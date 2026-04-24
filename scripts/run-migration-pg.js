@@ -1,10 +1,11 @@
+import 'dotenv/config';
 #!/usr/bin/env node
 
 // Alternative: Use Supabase's SQL execution via HTTP POST
 // This uses an undocumented endpoint that some Supabase tools use
 
 const SUPABASE_PROJECT_REF = 'jereytrwxnuwcvzvqhbg'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
+const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY
 
 const SQL_STATEMENTS = [
   `ALTER TABLE apps ADD COLUMN IF NOT EXISTS detailed_description TEXT;`,

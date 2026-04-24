@@ -1,8 +1,9 @@
+import 'dotenv/config';
 // Import 6 apps: Tobira.ai, Zoer.ai, Fastlane, Hynote, Eternity, Videodubber
 // Run: node import-6apps.js
 
 const SUPABASE_URL = 'https://jereytrwxnuwcvzvqhbg.supabase.co'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplcmV5dHJ3eG51d2N2enZxaGJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDkyMjU3OSwiZXhwIjoyMDg2NDk4NTc5fQ.rMilS1vu-xaoBLa5N2zbvPG9SDVPaaKwyd5GQ9vMTkE'
+const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY
 
 function randomDate() {
   const day = Math.floor(Math.random() * 5) + 20 // 20-24 March 2026
