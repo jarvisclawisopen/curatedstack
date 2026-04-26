@@ -17,9 +17,18 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    flowType: 'pkce',
+    flowType: 'implicit',
   },
 });
+
+// Debug: log every auth event so the user can diagnose magic-link issues
+// from DevTools.
+const _origGetSession = supabase.auth.getSession.bind(supabase.auth);
+supabase.auth.getSession = async function () {
+  const r = await _origGetSession();
+  console.log('[CSAuth] getSession ->', !!r?.data?.session, r?.error?.message || '');
+  return r;
+};
 
 // ------------------------------------------------------------------
 // State
@@ -77,12 +86,19 @@ async function refresh() {
 // Kick off initial session load (no top-level await for browser-target build)
 refresh();
 
-supabase.auth.onAuthStateChange(async (_event, session) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log('[CSAuth] onAuthStateChange ->', event, !!session);
   state.session = session;
   state.user    = session?.user ?? null;
   state.profile = state.user ? await loadProfile(state.user.id) : null;
   state.loading = false;
   emit();
+
+  // Clean magic-link / OAuth params from the URL so they don't get reused
+  if (event === 'SIGNED_IN' && (window.location.hash || window.location.search.includes('code='))) {
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
 });
 
 // ------------------------------------------------------------------

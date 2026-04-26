@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="l1" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="l2" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="l3" x1="12" y1="0" x2="68" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#047857"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-80%" width="140%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge background -->
+  <rect width="80" height="80" rx="18" fill="url(#bg)"/>
+  <!-- Top gloss -->
+  <rect x="0" y="0" width="80" height="40" rx="18" fill="url(#shine)"/>
+
+  <!-- Stack layer 3 — bottom, smallest, faintest -->
+  <rect x="20" y="57" width="40" height="7" rx="2" fill="url(#l3)" opacity="0.45"/>
+
+  <!-- Stack layer 2 — middle -->
+  <rect x="14" y="45" width="52" height="7" rx="2" fill="url(#l2)" opacity="0.70"/>
+
+  <!-- Stack layer 1 — top, brightest (curated/selected) -->
+  <rect x="12" y="33" width="56" height="7" rx="2" fill="url(#l1)" filter="url(#glow)"/>
+
+  <!-- Corner bracket top-left — code/terminal feel -->
+  <path d="M12 22 L12 16 L18 16" stroke="#34d399" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+  <!-- Corner bracket bottom-right -->
+  <path d="M62 16 L68 16 L68 22" stroke="#34d399" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+</svg>
